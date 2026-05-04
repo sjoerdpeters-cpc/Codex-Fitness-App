@@ -1106,11 +1106,24 @@
 
     <output class="toast" id="toast" aria-live="polite"></output>
 
-    <script src="data/fitness-data.js"></script>
+    <script src="data/materials.js"></script>
+    <script src="data/muscle-groups.js"></script>
+    <script src="data/exercises.js"></script>
     <script>
       const STORAGE_KEY = "fitnessManagerState";
       const CURRENT_SCHEMA_VERSION = 1;
-      const sourceData = window.FITNESS_SOURCE_DATA;
+      const sourceData = {
+        versions: {
+          exercises: window.FITNESS_EXERCISES_DATA.version,
+          muscleGroups: window.FITNESS_MUSCLE_GROUPS_DATA.version,
+          materials: window.FITNESS_MATERIALS_DATA.version
+        },
+        defaultEquipmentIds: window.FITNESS_MATERIALS_DATA.defaultEquipmentIds,
+        defaultMaterialConfig: window.FITNESS_MATERIALS_DATA.defaultMaterialConfig,
+        materials: window.FITNESS_MATERIALS_DATA.items,
+        muscleGroups: window.FITNESS_MUSCLE_GROUPS_DATA.items,
+        exercises: window.FITNESS_EXERCISES_DATA.items
+      };
 
       const defaultState = {
         schemaVersion: CURRENT_SCHEMA_VERSION,
