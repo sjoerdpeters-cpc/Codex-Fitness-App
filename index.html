@@ -134,6 +134,7 @@
       .secondary-button:focus-visible,
       .tile:focus-visible,
       .exercise:focus-visible,
+      .legend-button:focus-visible,
       .link-button:focus-visible,
       .nav-item:focus-visible,
       input:focus-visible,
@@ -273,6 +274,69 @@
 
       .filter-bar {
         margin-bottom: 12px;
+      }
+
+      .body-map-card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        padding: 16px;
+        display: grid;
+        gap: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .body-map {
+        width: 100%;
+        max-width: 260px;
+        justify-self: center;
+      }
+
+      .body-outline {
+        fill: #242424;
+        stroke: #3a3a3a;
+        stroke-width: 2;
+      }
+
+      .muscle-zone {
+        fill: rgba(255, 107, 53, 0.18);
+        stroke: rgba(255, 107, 53, 0.65);
+        stroke-width: 2;
+        cursor: pointer;
+        transition: fill 160ms ease, stroke 160ms ease, transform 160ms ease;
+        transform-origin: center;
+      }
+
+      .muscle-zone:hover,
+      .muscle-zone:focus-visible,
+      .muscle-zone.active {
+        fill: rgba(255, 107, 53, 0.58);
+        stroke: var(--accent);
+        outline: none;
+      }
+
+      .body-map-legend {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .legend-button {
+        min-height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #101010;
+        color: var(--muted);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .legend-button.active {
+        border-color: rgba(255, 107, 53, 0.7);
+        background: rgba(255, 107, 53, 0.12);
+        color: var(--accent);
       }
 
       .chip-row {
@@ -812,6 +876,28 @@
           <button class="link-button" type="button" data-action="all">Alles zien</button>
         </div>
 
+        <article class="body-map-card" aria-labelledby="body-map-title">
+          <div>
+            <h2 id="body-map-title">Kies op lichaam</h2>
+            <div class="muted">Tik op een spiergroep om de oefeningen te filteren.</div>
+          </div>
+
+          <svg class="body-map" viewBox="0 0 260 430" role="img" aria-labelledby="body-map-title">
+            <circle class="body-outline" cx="130" cy="42" r="28"></circle>
+            <path class="body-outline" d="M86 93c14-19 74-19 88 0l18 102c4 25-9 53-31 63l-9 132h-44l-9-132c-22-10-35-38-31-63z"></path>
+            <path class="body-outline" d="M86 106 44 184l24 14 43-75z"></path>
+            <path class="body-outline" d="M174 106l42 78-24 14-43-75z"></path>
+            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="shoulders_front" aria-label="Schouders" d="M88 94c13-12 25-15 42-15 17 0 29 3 42 15l-12 28c-18-11-42-11-60 0z"></path>
+            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="chest_mid_lower" aria-label="Borst" d="M96 124c18-14 50-14 68 0l-7 48c-18 10-36 10-54 0z"></path>
+            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="core_deep" aria-label="Core" d="M103 178c18 8 36 8 54 0l5 56c-20 11-44 11-64 0z"></path>
+            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="glutes" aria-label="Bilspieren" d="M99 240c20 11 42 11 62 0l-7 42c-16 12-32 12-48 0z"></path>
+            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="quadriceps" aria-label="Quadriceps" d="M102 286h24l-3 104h-24zM134 286h24l3 104h-24z"></path>
+            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="hamstrings" aria-label="Hamstrings" d="M88 252 70 376h22l24-91zM172 252l18 124h-22l-24-91z"></path>
+          </svg>
+
+          <div class="body-map-legend" data-body-map-legend></div>
+        </article>
+
         <div class="filter-bar">
           <label>
             Spiergroep
@@ -1032,6 +1118,8 @@
       const exerciseList = document.querySelector("[data-exercise-list]");
       const materialList = document.querySelector("[data-material-list]");
       const muscleFilter = document.querySelector("[data-muscle-filter]");
+      const bodyMuscleTargets = document.querySelectorAll("[data-body-muscle]");
+      const bodyMapLegend = document.querySelector("[data-body-map-legend]");
       const views = document.querySelectorAll("[data-view]");
       const viewLinks = document.querySelectorAll("[data-view-link]");
       let appState = FitnessStore.load();
@@ -1105,6 +1193,28 @@
           .join("");
 
         muscleFilter.innerHTML = `<option value="all">Alle spiergroepen</option>${options}`;
+      }
+
+      function renderBodyMapLegend() {
+        const visibleMuscles = ["chest_mid_lower", "shoulders_front", "core_deep", "glutes", "quadriceps", "hamstrings"];
+
+        bodyMapLegend.innerHTML = visibleMuscles.map((id) => `
+          <button class="legend-button" type="button" data-body-muscle-button="${id}">${getMuscleName(id)}</button>
+        `).join("");
+      }
+
+      function setActiveMuscle(muscleId) {
+        muscleFilter.value = muscleId;
+
+        bodyMuscleTargets.forEach((target) => {
+          target.classList.toggle("active", target.dataset.bodyMuscle === muscleId);
+        });
+
+        document.querySelectorAll("[data-body-muscle-button]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.bodyMuscleButton === muscleId);
+        });
+
+        renderExercises();
       }
 
       function renderExercises() {
@@ -1321,13 +1431,33 @@
 
       document.querySelector("[data-action='all']").addEventListener("click", () => {
         showView("exercises", "push");
-        muscleFilter.value = "all";
-        renderExercises();
+        setActiveMuscle("all");
         showToast("Alle oefeningen getoond.");
       });
 
       muscleFilter.addEventListener("change", () => {
-        renderExercises();
+        setActiveMuscle(muscleFilter.value);
+      });
+
+      bodyMuscleTargets.forEach((target) => {
+        target.addEventListener("click", () => {
+          setActiveMuscle(target.dataset.bodyMuscle);
+        });
+
+        target.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setActiveMuscle(target.dataset.bodyMuscle);
+          }
+        });
+      });
+
+      bodyMapLegend.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-body-muscle-button]");
+
+        if (button) {
+          setActiveMuscle(button.dataset.bodyMuscleButton);
+        }
       });
 
       window.addEventListener("hashchange", () => {
@@ -1337,6 +1467,7 @@
       renderProfile();
       renderMaterials();
       renderMuscleFilter();
+      renderBodyMapLegend();
       renderExercises();
       showView((window.location.hash || (isProfileComplete(appState.profile) ? "#home" : "#profile")).slice(1));
     </script>
