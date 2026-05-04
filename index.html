@@ -45,7 +45,7 @@
       .app {
         min-height: 100vh;
         background: var(--bg);
-        padding-bottom: 96px;
+        padding-bottom: calc(96px + env(safe-area-inset-bottom));
       }
 
       .view {
@@ -58,11 +58,11 @@
       }
 
       .page-header {
-        padding: 32px 24px 8px;
+        padding: calc(32px + env(safe-area-inset-top)) 24px 8px;
       }
 
       .hero {
-        padding: 32px 24px 36px;
+        padding: calc(32px + env(safe-area-inset-top)) 24px 36px;
         background:
           radial-gradient(circle at 82% 8%, rgba(79, 195, 247, 0.12), transparent 26%),
           linear-gradient(180deg, #2a1000 0%, rgba(255, 107, 53, 0.14) 47%, var(--bg) 100%);
@@ -127,6 +127,17 @@
       .tile:active,
       .exercise:active {
         transform: translateY(1px);
+      }
+
+      .primary-button:focus-visible,
+      .secondary-button:focus-visible,
+      .tile:focus-visible,
+      .exercise:focus-visible,
+      .link-button:focus-visible,
+      .nav-item:focus-visible,
+      input:focus-visible {
+        outline: 3px solid rgba(255, 107, 53, 0.38);
+        outline-offset: 3px;
       }
 
       .section {
@@ -423,10 +434,10 @@
         bottom: 0;
         left: 0;
         z-index: 10;
-        height: 80px;
+        height: calc(80px + env(safe-area-inset-bottom));
         border-top: 1px solid var(--line);
         background: #161616;
-        padding: 8px 10px 16px;
+        padding: 8px 10px calc(16px + env(safe-area-inset-bottom));
       }
 
       .nav-inner {
@@ -440,6 +451,7 @@
         place-items: center;
         align-content: center;
         gap: 4px;
+        border-radius: 12px;
         color: var(--soft);
         font-size: 11px;
         font-weight: 600;
@@ -447,6 +459,7 @@
       }
 
       .nav-item.active {
+        background: rgba(255, 107, 53, 0.08);
         color: var(--accent);
       }
 
@@ -585,7 +598,7 @@
 
       </div>
 
-      <div class="view" data-view="workout">
+      <div class="view" data-view="workout" hidden>
       <header class="page-header">
         <div class="eyebrow">Workout</div>
         <h1>Training starten</h1>
@@ -612,7 +625,7 @@
       </section>
       </div>
 
-      <div class="view" data-view="profile">
+      <div class="view" data-view="profile" hidden>
       <header class="page-header">
         <div class="eyebrow">Profiel</div>
         <h1>Jouw gegevens</h1>
@@ -674,7 +687,7 @@
 
       </div>
 
-      <div class="view" data-view="exercises">
+      <div class="view" data-view="exercises" hidden>
       <header class="page-header">
         <div class="eyebrow">Oefeningen</div>
         <h1>Bibliotheek</h1>
@@ -727,7 +740,7 @@
 
     <nav class="bottom-nav" aria-label="Hoofdnavigatie">
       <div class="nav-inner">
-        <a class="nav-item active" href="#home" data-view-link="home">
+        <a class="nav-item active" href="#home" data-view-link="home" aria-current="page">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"></path><path d="M5 10v10h14V10"></path></svg>
           Home
         </a>
@@ -764,17 +777,23 @@
         trainingHistory: []
       };
 
+      function cloneState(state) {
+        return typeof structuredClone === "function"
+          ? structuredClone(state)
+          : JSON.parse(JSON.stringify(state));
+      }
+
       const FitnessStore = {
         load() {
           try {
             const stored = window.localStorage.getItem(STORAGE_KEY);
             if (!stored) {
-              return structuredClone(defaultState);
+              return cloneState(defaultState);
             }
 
             return this.migrate(JSON.parse(stored));
           } catch {
-            return structuredClone(defaultState);
+            return cloneState(defaultState);
           }
         },
 
@@ -786,7 +805,7 @@
 
         resetProfile() {
           const state = this.load();
-          state.profile = structuredClone(defaultState.profile);
+          state.profile = cloneState(defaultState.profile);
           return this.save(state);
         },
 
@@ -828,22 +847,27 @@
       let appState = FitnessStore.load();
       let toastTimer;
 
-      function showView(viewName) {
+      function showView(viewName, historyMode = "replace") {
         const validView = document.querySelector(`[data-view="${viewName}"]`) ? viewName : "home";
 
         views.forEach((view) => {
-          view.classList.toggle("active", view.dataset.view === validView);
+          const isActive = view.dataset.view === validView;
+          view.classList.toggle("active", isActive);
+          view.hidden = !isActive;
         });
 
         viewLinks.forEach((link) => {
-          link.classList.toggle("active", link.dataset.viewLink === validView);
+          const isActive = link.dataset.viewLink === validView;
+          link.classList.toggle("active", isActive);
+          link.toggleAttribute("aria-current", isActive);
         });
 
-        if (window.location.hash !== `#${validView}`) {
-          history.replaceState(null, "", `#${validView}`);
+        if (historyMode !== "none" && window.location.hash !== `#${validView}`) {
+          const method = historyMode === "push" ? "pushState" : "replaceState";
+          history[method](null, "", `#${validView}`);
         }
 
-        window.scrollTo({ top: 0, behavior: "instant" });
+        window.scrollTo({ top: 0, behavior: "auto" });
       }
 
       function showToast(message) {
@@ -923,24 +947,24 @@
       viewLinks.forEach((link) => {
         link.addEventListener("click", (event) => {
           event.preventDefault();
-          showView(link.dataset.viewLink);
+          showView(link.dataset.viewLink, "push");
         });
       });
 
       document.querySelectorAll("[data-action='start-workout']").forEach((button) => {
         button.addEventListener("click", () => {
-          showView("workout");
+          showView("workout", "push");
           showToast("Workout module komt later.");
         });
       });
 
       document.querySelector("[data-action='stopwatch']").addEventListener("click", () => {
-        showView("workout");
+        showView("workout", "push");
         showToast("Stopwatch komt later.");
       });
 
       document.querySelector("[data-action='all']").addEventListener("click", () => {
-        showView("exercises");
+        showView("exercises", "push");
         showToast("Alle oefeningen komen later.");
       });
 
@@ -948,6 +972,10 @@
         button.addEventListener("click", () => {
           showToast(`${button.dataset.exercise} geselecteerd.`);
         });
+      });
+
+      window.addEventListener("hashchange", () => {
+        showView((window.location.hash || "#home").slice(1), "none");
       });
 
       renderProfile();
