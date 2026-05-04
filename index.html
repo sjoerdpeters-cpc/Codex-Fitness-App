@@ -48,6 +48,19 @@
         padding-bottom: 96px;
       }
 
+      .view {
+        display: none;
+        min-height: calc(100vh - 96px);
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      .page-header {
+        padding: 32px 24px 8px;
+      }
+
       .hero {
         padding: 32px 24px 36px;
         background:
@@ -242,6 +255,45 @@
         padding: 16px;
         display: grid;
         gap: 16px;
+      }
+
+      .workout-card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        padding: 20px;
+        display: grid;
+        gap: 16px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .workout-steps {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .workout-steps li {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .step-number {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: rgba(255, 107, 53, 0.1);
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 900;
       }
 
       .profile-summary {
@@ -461,7 +513,8 @@
   </head>
   <body>
     <main class="app">
-      <section class="hero" id="home">
+      <div class="view active" data-view="home">
+      <section class="hero">
         <div class="hero-copy">
           <div class="eyebrow">Goedemorgen,</div>
           <h1><span data-profile-name>Atleet</span></h1>
@@ -512,7 +565,7 @@
         </div>
 
         <div class="quick-grid">
-          <a class="tile" href="#oefeningen">
+          <a class="tile" href="#exercises" data-view-link="exercises">
             <div class="icon-box">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"></path><path d="M8 19V5"></path><path d="M16 19V5"></path><path d="M20 19V5"></path><path d="M8 12h8"></path></svg>
             </div>
@@ -529,6 +582,42 @@
           </button>
         </div>
       </section>
+
+      </div>
+
+      <div class="view" data-view="workout">
+      <header class="page-header">
+        <div class="eyebrow">Workout</div>
+        <h1>Training starten</h1>
+        <div class="muted">Klaar voor de volgende module.</div>
+      </header>
+
+      <section class="section" aria-labelledby="workout-title">
+        <article class="workout-card">
+          <div class="section-header">
+            <h2 id="workout-title">Vandaag</h2>
+          </div>
+
+          <ul class="workout-steps">
+            <li><span class="step-number">1</span><span>Kies een oefening uit de lijst.</span></li>
+            <li><span class="step-number">2</span><span>Registreer straks sets, reps en gewicht.</span></li>
+            <li><span class="step-number">3</span><span>Bewaar de training later in trainingshistorie.</span></li>
+          </ul>
+
+          <button class="primary-button" type="button" data-action="start-workout">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+            Start Workout
+          </button>
+        </article>
+      </section>
+      </div>
+
+      <div class="view" data-view="profile">
+      <header class="page-header">
+        <div class="eyebrow">Profiel</div>
+        <h1>Jouw gegevens</h1>
+        <div class="muted">Wijzigingen worden lokaal opgeslagen.</div>
+      </header>
 
       <section class="section" id="profiel" aria-labelledby="profile-title">
         <div class="section-header">
@@ -583,6 +672,15 @@
         </article>
       </section>
 
+      </div>
+
+      <div class="view" data-view="exercises">
+      <header class="page-header">
+        <div class="eyebrow">Oefeningen</div>
+        <h1>Bibliotheek</h1>
+        <div class="muted">Bekijk beschikbare oefeningen.</div>
+      </header>
+
       <section class="section" id="oefeningen" aria-labelledby="recommended-title">
         <div class="section-header">
           <h2 id="recommended-title">Aanbevolen</h2>
@@ -624,23 +722,24 @@
           </button>
         </div>
       </section>
+      </div>
     </main>
 
     <nav class="bottom-nav" aria-label="Hoofdnavigatie">
       <div class="nav-inner">
-        <a class="nav-item active" href="#home">
+        <a class="nav-item active" href="#home" data-view-link="home">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"></path><path d="M5 10v10h14V10"></path></svg>
           Home
         </a>
-        <a class="nav-item" href="#oefeningen">
+        <a class="nav-item" href="#exercises" data-view-link="exercises">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"></path><path d="M8 19V5"></path><path d="M16 19V5"></path><path d="M20 19V5"></path><path d="M8 12h8"></path></svg>
           Oefeningen
         </a>
-        <a class="nav-item" href="#workout">
+        <a class="nav-item" href="#workout" data-view-link="workout">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
           Workout
         </a>
-        <a class="nav-item" href="#profiel">
+        <a class="nav-item" href="#profile" data-view-link="profile">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.2-6 8-6s6.5 2 8 6"></path></svg>
           Profiel
         </a>
@@ -724,8 +823,28 @@
       const profileMeta = document.querySelector("[data-profile-meta]");
       const profileInitials = document.querySelector("[data-profile-initials]");
       const equipmentCount = document.querySelector("[data-equipment-count]");
+      const views = document.querySelectorAll("[data-view]");
+      const viewLinks = document.querySelectorAll("[data-view-link]");
       let appState = FitnessStore.load();
       let toastTimer;
+
+      function showView(viewName) {
+        const validView = document.querySelector(`[data-view="${viewName}"]`) ? viewName : "home";
+
+        views.forEach((view) => {
+          view.classList.toggle("active", view.dataset.view === validView);
+        });
+
+        viewLinks.forEach((link) => {
+          link.classList.toggle("active", link.dataset.viewLink === validView);
+        });
+
+        if (window.location.hash !== `#${validView}`) {
+          history.replaceState(null, "", `#${validView}`);
+        }
+
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
 
       function showToast(message) {
         window.clearTimeout(toastTimer);
@@ -801,15 +920,27 @@
         showToast("Profiel gereset.");
       });
 
-      document.querySelector("[data-action='start-workout']").addEventListener("click", () => {
-        showToast("Workout module komt later.");
+      viewLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          showView(link.dataset.viewLink);
+        });
+      });
+
+      document.querySelectorAll("[data-action='start-workout']").forEach((button) => {
+        button.addEventListener("click", () => {
+          showView("workout");
+          showToast("Workout module komt later.");
+        });
       });
 
       document.querySelector("[data-action='stopwatch']").addEventListener("click", () => {
+        showView("workout");
         showToast("Stopwatch komt later.");
       });
 
       document.querySelector("[data-action='all']").addEventListener("click", () => {
+        showView("exercises");
         showToast("Alle oefeningen komen later.");
       });
 
@@ -820,6 +951,7 @@
       });
 
       renderProfile();
+      showView((window.location.hash || "#home").slice(1));
     </script>
   </body>
 </html>
