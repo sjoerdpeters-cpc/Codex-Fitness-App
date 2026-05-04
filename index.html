@@ -321,6 +321,11 @@
         gap: 8px;
       }
 
+      .body-map-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
       .legend-button {
         min-height: 36px;
         border: 1px solid var(--line);
@@ -896,6 +901,9 @@
           </svg>
 
           <div class="body-map-legend" data-body-map-legend></div>
+          <div class="body-map-actions">
+            <button class="secondary-button" type="button" data-action="clear-muscle-filter">Alle spiergroepen</button>
+          </div>
         </article>
 
         <div class="filter-bar">
@@ -1433,6 +1441,10 @@
         showView("exercises", "push");
         setActiveMuscle("all");
         showToast("Alle oefeningen getoond.");
+      });
+
+      document.querySelector("[data-action='clear-muscle-filter']").addEventListener("click", () => {
+        setActiveMuscle("all");
       });
 
       muscleFilter.addEventListener("change", () => {
