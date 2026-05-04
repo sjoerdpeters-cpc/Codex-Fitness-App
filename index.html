@@ -659,6 +659,11 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
       }
 
+      .material-card.active {
+        border-color: rgba(255, 107, 53, 0.7);
+        background: rgba(255, 107, 53, 0.08);
+      }
+
       .material-title {
         display: flex;
         align-items: center;
@@ -684,10 +689,10 @@
 
       .material-toggle {
         width: 100%;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        background: var(--panel);
-        padding: 14px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        padding: 0;
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
@@ -699,8 +704,7 @@
       }
 
       .material-toggle.active {
-        border-color: rgba(255, 107, 53, 0.7);
-        background: rgba(255, 107, 53, 0.08);
+        color: var(--text);
       }
 
       .toggle-switch {
@@ -728,6 +732,16 @@
 
       .material-toggle.active .toggle-switch::before {
         transform: translateX(20px);
+      }
+
+      .material-weight-field {
+        margin-top: 2px;
+        letter-spacing: 0;
+      }
+
+      .material-weight-field input {
+        min-height: 40px;
+        font-size: 14px;
       }
 
       .bottom-nav {
@@ -1106,6 +1120,11 @@
           heightCm: ""
         },
         equipment: ["mat_001", "mat_002", "mat_003", "mat_005"],
+        materialWeightsKg: {
+          mat_001: [2.5, 5, 10, 12],
+          mat_003: [5, 10, 20],
+          mat_004: [1.25, 2.5, 5]
+        },
         trainingHistory: []
       };
 
@@ -1257,6 +1276,15 @@
           return this.save(state);
         },
 
+        updateMaterialWeights(materialId, weightsKg) {
+          const state = this.load();
+          state.materialWeightsKg = {
+            ...(state.materialWeightsKg || {}),
+            [materialId]: weightsKg
+          };
+          return this.save(state);
+        },
+
         migrate(rawState) {
           const state = rawState && typeof rawState === "object" ? rawState : {};
           const equipment = state.equipmentInitialized && Array.isArray(state.equipment)
@@ -1271,6 +1299,10 @@
               ...(state.profile || {})
             },
             equipment,
+            materialWeightsKg: {
+              ...defaultState.materialWeightsKg,
+              ...(state.materialWeightsKg || {})
+            },
             trainingHistory: Array.isArray(state.trainingHistory) ? state.trainingHistory : []
           };
         }
@@ -1339,8 +1371,18 @@
         return sourceData.materials.filter((material) => appState.equipment.includes(material.id));
       }
 
+      function isConfigurableMaterial(materialId) {
+        return ["mat_001", "mat_003", "mat_004"].includes(materialId);
+      }
+
+      function getMaterialWeights(material) {
+        const configuredWeights = appState.materialWeightsKg?.[material.id];
+
+        return Array.isArray(configuredWeights) ? configuredWeights : material.weightsKg;
+      }
+
       function getMaterialLoadLabel(material) {
-        const weights = material.weightsKg.join(", ");
+        const weights = getMaterialWeights(material).join(", ");
         const suffix = material.loadType === "pair"
           ? "per paar"
           : material.loadType === "barbell"
@@ -1352,19 +1394,32 @@
 
       function renderMaterials() {
         materialList.innerHTML = sourceData.materials.map((material) => `
-          <button class="material-toggle${appState.equipment.includes(material.id) ? " active" : ""}" type="button" data-material-id="${material.id}" aria-pressed="${appState.equipment.includes(material.id)}">
-            <span>
-              <span class="material-title">${material.name}</span>
-              <span class="muted">${getMaterialLoadLabel(material)}</span>
-              ${material.available ? "" : `<span class="chip">Bron: niet actief</span>`}
-            </span>
-            <span class="toggle-switch" aria-hidden="true"></span>
-          </button>
+          <article class="material-card${appState.equipment.includes(material.id) ? " active" : ""}">
+            <button class="material-toggle${appState.equipment.includes(material.id) ? " active" : ""}" type="button" data-material-id="${material.id}" aria-pressed="${appState.equipment.includes(material.id)}">
+              <span>
+                <span class="material-title">${material.name}</span>
+                <span class="muted">${getMaterialLoadLabel(material)}</span>
+              </span>
+              <span class="toggle-switch" aria-hidden="true"></span>
+            </button>
+            ${isConfigurableMaterial(material.id) ? `
+              <label class="material-weight-field">
+                Beschikbare gewichten in kg
+                <input type="text" inputmode="decimal" data-material-weights-id="${material.id}" value="${getMaterialWeights(material).join(", ")}" placeholder="2.5, 5, 10">
+              </label>
+            ` : ""}
+          </article>
         `).join("");
 
         materialList.querySelectorAll("[data-material-id]").forEach((button) => {
           button.addEventListener("click", () => {
             toggleMaterial(button.dataset.materialId);
+          });
+        });
+
+        materialList.querySelectorAll("[data-material-weights-id]").forEach((input) => {
+          input.addEventListener("change", () => {
+            updateMaterialWeights(input.dataset.materialWeightsId, input.value);
           });
         });
       }
@@ -1382,6 +1437,30 @@
         renderProfile();
         renderMaterials();
         renderExercises();
+      }
+
+      function parseWeights(value) {
+        return value
+          .split(/[;,]/)
+          .map((part) => Number(part.trim().replace(",", ".")))
+          .filter((weight) => Number.isFinite(weight) && weight > 0)
+          .sort((a, b) => a - b);
+      }
+
+      function updateMaterialWeights(materialId, value) {
+        const weightsKg = [...new Set(parseWeights(value))];
+        const material = sourceData.materials.find((item) => item.id === materialId);
+
+        if (!material || !weightsKg.length) {
+          renderMaterials();
+          showToast("Vul minimaal een geldig gewicht in.");
+          return;
+        }
+
+        appState = FitnessStore.updateMaterialWeights(materialId, weightsKg);
+        renderMaterials();
+        renderExercises();
+        showToast("Gewichten opgeslagen op dit apparaat.");
       }
 
       function getExerciseMaterials(exercise) {
