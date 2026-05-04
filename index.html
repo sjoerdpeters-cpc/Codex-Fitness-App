@@ -379,6 +379,25 @@
         box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.16);
       }
 
+      input.input-error {
+        border-color: #ff6b6b;
+      }
+
+      .form-error {
+        display: none;
+        border: 1px solid rgba(255, 107, 107, 0.35);
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: rgba(255, 107, 107, 0.08);
+        color: #ffb3b3;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .form-error.show {
+        display: block;
+      }
+
       .form-actions {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
@@ -507,19 +526,35 @@
       }
 
       @media (max-width: 430px) {
-        .stats,
         .field-grid,
         .form-actions {
           grid-template-columns: 1fr;
         }
 
+        .stats {
+          display: grid;
+          grid-auto-columns: minmax(148px, 72%);
+          grid-auto-flow: column;
+          grid-template-columns: none;
+          margin-right: -24px;
+          overflow-x: auto;
+          padding: 0 24px 4px 0;
+          scroll-padding-left: 24px;
+          scroll-snap-type: x proximity;
+          scrollbar-width: none;
+        }
+
+        .stats::-webkit-scrollbar {
+          display: none;
+        }
+
         .stat-card {
-          grid-template-columns: 36px minmax(0, 1fr);
-          align-items: center;
+          min-height: 132px;
+          scroll-snap-align: start;
         }
 
         .stat-label {
-          grid-column: 2;
+          grid-column: auto;
         }
       }
     </style>
@@ -646,27 +681,29 @@
             </div>
           </div>
 
-          <form class="profile-form" data-profile-form>
+          <form class="profile-form" data-profile-form novalidate>
+            <div class="form-error" data-form-error role="alert"></div>
+
             <label>
               Naam
-              <input name="name" type="text" autocomplete="name" placeholder="Bijv. Sjoerd" required>
+              <input name="name" type="text" autocomplete="name" placeholder="Bijv. Sjoerd">
             </label>
 
             <div class="field-grid">
               <label>
                 Geboortedatum
-                <input name="birthDate" type="date" required>
+                <input name="birthDate" type="date">
               </label>
 
               <label>
                 Gewicht
-                <input name="weightKg" type="number" inputmode="decimal" min="20" max="300" step="0.1" placeholder="kg" required>
+                <input name="weightKg" type="number" inputmode="decimal" min="20" max="300" step="0.1" placeholder="kg">
               </label>
             </div>
 
             <label>
               Lengte
-              <input name="heightCm" type="number" inputmode="numeric" min="80" max="260" step="1" placeholder="cm" required>
+              <input name="heightCm" type="number" inputmode="numeric" min="80" max="260" step="1" placeholder="cm">
             </label>
 
             <div class="form-actions">
@@ -837,6 +874,7 @@
 
       const toast = document.querySelector("#toast");
       const profileForm = document.querySelector("[data-profile-form]");
+      const formError = document.querySelector("[data-form-error]");
       const profileNameTargets = document.querySelectorAll("[data-profile-name]");
       const profileShort = document.querySelector("[data-profile-short]");
       const profileMeta = document.querySelector("[data-profile-meta]");
@@ -895,6 +933,71 @@
         return parts.length ? parts.join(" | ") : "Vul je profiel aan";
       }
 
+      function isProfileComplete(profile) {
+        return Boolean(
+          profile.name.trim() &&
+          profile.name.trim() !== defaultState.profile.name &&
+          profile.birthDate &&
+          profile.weightKg &&
+          profile.heightCm
+        );
+      }
+
+      function getProfileErrors(profile) {
+        const errors = [];
+        const weight = Number(profile.weightKg);
+        const height = Number(profile.heightCm);
+
+        if (!profile.name.trim() || profile.name.trim() === defaultState.profile.name) {
+          errors.push("Vul je naam in.");
+        }
+
+        if (!profile.birthDate) {
+          errors.push("Kies je geboortedatum.");
+        }
+
+        if (!profile.weightKg || Number.isNaN(weight) || weight < 20 || weight > 300) {
+          errors.push("Vul een gewicht tussen 20 en 300 kg in.");
+        }
+
+        if (!profile.heightCm || Number.isNaN(height) || height < 80 || height > 260) {
+          errors.push("Vul een lengte tussen 80 en 260 cm in.");
+        }
+
+        return errors;
+      }
+
+      function setProfileErrors(errors) {
+        const invalidFields = new Set();
+
+        formError.textContent = errors.join(" ");
+        formError.classList.toggle("show", errors.length > 0);
+
+        if (errors.some((error) => error.includes("naam"))) {
+          invalidFields.add("name");
+        }
+
+        if (errors.some((error) => error.includes("geboortedatum"))) {
+          invalidFields.add("birthDate");
+        }
+
+        if (errors.some((error) => error.includes("gewicht"))) {
+          invalidFields.add("weightKg");
+        }
+
+        if (errors.some((error) => error.includes("lengte"))) {
+          invalidFields.add("heightCm");
+        }
+
+        Array.from(profileForm.elements).forEach((field) => {
+          if (field.name) {
+            const isInvalid = invalidFields.has(field.name);
+            field.classList.toggle("input-error", isInvalid);
+            field.toggleAttribute("aria-invalid", isInvalid);
+          }
+        });
+      }
+
       function getInitials(name) {
         return name
           .split(" ")
@@ -927,19 +1030,34 @@
         event.preventDefault();
 
         const formData = new FormData(profileForm);
-        appState = FitnessStore.updateProfile({
+        const profile = {
           name: String(formData.get("name") || ""),
           birthDate: String(formData.get("birthDate") || ""),
           weightKg: String(formData.get("weightKg") || ""),
           heightCm: String(formData.get("heightCm") || "")
-        });
+        };
+        const errors = getProfileErrors(profile);
+
+        if (errors.length) {
+          setProfileErrors(errors);
+          showToast("Controleer je profielgegevens.");
+          return;
+        }
+
+        setProfileErrors([]);
+        appState = FitnessStore.updateProfile(profile);
 
         renderProfile();
         showToast("Profiel opgeslagen op dit apparaat.");
       });
 
+      profileForm.addEventListener("input", () => {
+        setProfileErrors([]);
+      });
+
       document.querySelector("[data-action='reset-profile']").addEventListener("click", () => {
         appState = FitnessStore.resetProfile();
+        setProfileErrors([]);
         renderProfile();
         showToast("Profiel gereset.");
       });
@@ -979,7 +1097,7 @@
       });
 
       renderProfile();
-      showView((window.location.hash || "#home").slice(1));
+      showView((window.location.hash || (isProfileComplete(appState.profile) ? "#home" : "#profile")).slice(1));
     </script>
   </body>
 </html>
