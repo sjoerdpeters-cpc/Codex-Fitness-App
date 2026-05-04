@@ -135,6 +135,7 @@
       .tile:focus-visible,
       .exercise:focus-visible,
       .legend-button:focus-visible,
+      .body-toggle-button:focus-visible,
       .link-button:focus-visible,
       .nav-item:focus-visible,
       input:focus-visible,
@@ -287,32 +288,129 @@
       }
 
       .body-map {
-        width: 100%;
-        max-width: 260px;
+        position: relative;
+        width: min(42vw, 150px);
+        height: min(58vh, 380px);
+        min-height: 320px;
         justify-self: center;
+        overflow: hidden;
+        border-radius: 14px;
+        background: #080808;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
       }
 
-      .body-outline {
-        fill: #242424;
-        stroke: #3a3a3a;
-        stroke-width: 2;
+      .body-map img {
+        height: 100%;
+        width: auto;
+        max-width: none;
+        display: block;
+        pointer-events: none;
+        transition: transform 180ms ease;
       }
 
-      .muscle-zone {
-        fill: rgba(255, 107, 53, 0.18);
-        stroke: rgba(255, 107, 53, 0.65);
-        stroke-width: 2;
+      .body-map[data-side="back"] img {
+        transform: translateX(-50%);
+      }
+
+      .body-toggle {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .body-toggle-button {
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #101010;
+        color: var(--muted);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
         cursor: pointer;
-        transition: fill 160ms ease, stroke 160ms ease, transform 160ms ease;
-        transform-origin: center;
       }
 
-      .muscle-zone:hover,
-      .muscle-zone:focus-visible,
-      .muscle-zone.active {
-        fill: rgba(255, 107, 53, 0.58);
-        stroke: var(--accent);
+      .body-toggle-button.active {
+        border-color: rgba(255, 107, 53, 0.7);
+        background: rgba(255, 107, 53, 0.12);
+        color: var(--accent);
+      }
+
+      .body-hotspot {
+        position: absolute;
+        border: 1px solid rgba(255, 107, 53, 0.8);
+        border-radius: 999px;
+        background: rgba(255, 107, 53, 0.2);
+        cursor: pointer;
+        transform: translate(-50%, -50%);
+        transition: background 160ms ease, box-shadow 160ms ease;
+      }
+
+      .body-hotspot:hover,
+      .body-hotspot:focus-visible,
+      .body-hotspot.active {
+        background: rgba(255, 107, 53, 0.62);
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.18);
         outline: none;
+      }
+
+      .body-map[data-side="front"] .body-hotspot[data-body-view="back"],
+      .body-map[data-side="back"] .body-hotspot[data-body-view="front"] {
+        display: none;
+      }
+
+      .hotspot-shoulders {
+        left: 50%;
+        top: 25%;
+        width: 58%;
+        height: 8%;
+      }
+
+      .hotspot-chest {
+        left: 50%;
+        top: 32%;
+        width: 48%;
+        height: 10%;
+      }
+
+      .hotspot-core {
+        left: 50%;
+        top: 42%;
+        width: 42%;
+        height: 13%;
+      }
+
+      .hotspot-quads {
+        left: 50%;
+        top: 68%;
+        width: 50%;
+        height: 21%;
+      }
+
+      .hotspot-back {
+        left: 50%;
+        top: 34%;
+        width: 52%;
+        height: 18%;
+      }
+
+      .hotspot-glutes {
+        left: 50%;
+        top: 55%;
+        width: 48%;
+        height: 11%;
+      }
+
+      .hotspot-hamstrings {
+        left: 50%;
+        top: 70%;
+        width: 48%;
+        height: 20%;
+      }
+
+      .body-map-help {
+        justify-self: center;
+        text-align: center;
       }
 
       .body-map-legend {
@@ -887,18 +985,22 @@
             <div class="muted">Tik op een spiergroep om de oefeningen te filteren.</div>
           </div>
 
-          <svg class="body-map" viewBox="0 0 260 430" role="img" aria-labelledby="body-map-title">
-            <circle class="body-outline" cx="130" cy="42" r="28"></circle>
-            <path class="body-outline" d="M86 93c14-19 74-19 88 0l18 102c4 25-9 53-31 63l-9 132h-44l-9-132c-22-10-35-38-31-63z"></path>
-            <path class="body-outline" d="M86 106 44 184l24 14 43-75z"></path>
-            <path class="body-outline" d="M174 106l42 78-24 14-43-75z"></path>
-            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="shoulders_front" aria-label="Schouders" d="M88 94c13-12 25-15 42-15 17 0 29 3 42 15l-12 28c-18-11-42-11-60 0z"></path>
-            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="chest_mid_lower" aria-label="Borst" d="M96 124c18-14 50-14 68 0l-7 48c-18 10-36 10-54 0z"></path>
-            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="core_deep" aria-label="Core" d="M103 178c18 8 36 8 54 0l5 56c-20 11-44 11-64 0z"></path>
-            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="glutes" aria-label="Bilspieren" d="M99 240c20 11 42 11 62 0l-7 42c-16 12-32 12-48 0z"></path>
-            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="quadriceps" aria-label="Quadriceps" d="M102 286h24l-3 104h-24zM134 286h24l3 104h-24z"></path>
-            <path class="muscle-zone" tabindex="0" role="button" data-body-muscle="hamstrings" aria-label="Hamstrings" d="M88 252 70 376h22l24-91zM172 252l18 124h-22l-24-91z"></path>
-          </svg>
+          <div class="body-toggle" role="group" aria-label="Kies voor- of achteraanzicht">
+            <button class="body-toggle-button active" type="button" data-body-side="front">Voor</button>
+            <button class="body-toggle-button" type="button" data-body-side="back">Achter</button>
+          </div>
+
+          <div class="body-map" data-body-map data-side="front" role="img" aria-label="Menselijk lichaam met klikbare spiergroepen">
+            <img src="inputfiles/body.png" alt="">
+            <button class="body-hotspot hotspot-shoulders" type="button" data-body-view="front" data-body-muscle="shoulders_front" aria-label="Schouders"></button>
+            <button class="body-hotspot hotspot-chest" type="button" data-body-view="front" data-body-muscle="chest_mid_lower" aria-label="Borst"></button>
+            <button class="body-hotspot hotspot-core" type="button" data-body-view="front" data-body-muscle="core_deep" aria-label="Core"></button>
+            <button class="body-hotspot hotspot-quads" type="button" data-body-view="front" data-body-muscle="quadriceps" aria-label="Quadriceps"></button>
+            <button class="body-hotspot hotspot-back" type="button" data-body-view="back" data-body-muscle="erector_spinae" aria-label="Rugstrekkers"></button>
+            <button class="body-hotspot hotspot-glutes" type="button" data-body-view="back" data-body-muscle="glutes" aria-label="Bilspieren"></button>
+            <button class="body-hotspot hotspot-hamstrings" type="button" data-body-view="back" data-body-muscle="hamstrings" aria-label="Hamstrings"></button>
+          </div>
+          <div class="body-map-help muted">Compacte weergave. Gebruik de toggle voor voor- en achterzijde.</div>
 
           <div class="body-map-legend" data-body-map-legend></div>
           <div class="body-map-actions">
@@ -1127,7 +1229,9 @@
       const materialList = document.querySelector("[data-material-list]");
       const muscleFilter = document.querySelector("[data-muscle-filter]");
       const bodyMuscleTargets = document.querySelectorAll("[data-body-muscle]");
+      const bodyMap = document.querySelector("[data-body-map]");
       const bodyMapLegend = document.querySelector("[data-body-map-legend]");
+      const bodySideButtons = document.querySelectorAll("[data-body-side]");
       const views = document.querySelectorAll("[data-view]");
       const viewLinks = document.querySelectorAll("[data-view-link]");
       let appState = FitnessStore.load();
@@ -1204,15 +1308,31 @@
       }
 
       function renderBodyMapLegend() {
-        const visibleMuscles = ["chest_mid_lower", "shoulders_front", "core_deep", "glutes", "quadriceps", "hamstrings"];
+        const visibleMuscles = ["chest_mid_lower", "shoulders_front", "core_deep", "quadriceps", "erector_spinae", "glutes", "hamstrings"];
 
         bodyMapLegend.innerHTML = visibleMuscles.map((id) => `
           <button class="legend-button" type="button" data-body-muscle-button="${id}">${getMuscleName(id)}</button>
         `).join("");
       }
 
+      function getBodySideForMuscle(muscleId) {
+        return ["erector_spinae", "glutes", "hamstrings"].includes(muscleId) ? "back" : "front";
+      }
+
+      function setBodySide(side) {
+        bodyMap.dataset.side = side;
+
+        bodySideButtons.forEach((button) => {
+          button.classList.toggle("active", button.dataset.bodySide === side);
+        });
+      }
+
       function setActiveMuscle(muscleId) {
         muscleFilter.value = muscleId;
+
+        if (muscleId !== "all") {
+          setBodySide(getBodySideForMuscle(muscleId));
+        }
 
         bodyMuscleTargets.forEach((target) => {
           target.classList.toggle("active", target.dataset.bodyMuscle === muscleId);
@@ -1455,12 +1575,11 @@
         target.addEventListener("click", () => {
           setActiveMuscle(target.dataset.bodyMuscle);
         });
+      });
 
-        target.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            setActiveMuscle(target.dataset.bodyMuscle);
-          }
+      bodySideButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          setBodySide(button.dataset.bodySide);
         });
       });
 
