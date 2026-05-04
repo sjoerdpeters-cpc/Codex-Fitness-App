@@ -134,6 +134,7 @@
       .secondary-button:focus-visible,
       .tile:focus-visible,
       .exercise:focus-visible,
+      .material-toggle:focus-visible,
       .legend-button:focus-visible,
       .body-toggle-button:focus-visible,
       .link-button:focus-visible,
@@ -681,6 +682,54 @@
         color: var(--muted);
       }
 
+      .material-toggle {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+        padding: 14px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .material-toggle.active {
+        border-color: rgba(255, 107, 53, 0.7);
+        background: rgba(255, 107, 53, 0.08);
+      }
+
+      .toggle-switch {
+        width: 46px;
+        height: 26px;
+        border-radius: 999px;
+        background: #333333;
+        padding: 3px;
+        transition: background 160ms ease;
+      }
+
+      .toggle-switch::before {
+        content: "";
+        width: 20px;
+        height: 20px;
+        display: block;
+        border-radius: 50%;
+        background: #ffffff;
+        transition: transform 160ms ease;
+      }
+
+      .material-toggle.active .toggle-switch {
+        background: var(--accent);
+      }
+
+      .material-toggle.active .toggle-switch::before {
+        transform: translateX(20px);
+      }
+
       .bottom-nav {
         position: fixed;
         right: 0;
@@ -865,14 +914,6 @@
         </div>
       </section>
 
-      <section class="section" aria-labelledby="materials-title">
-        <div class="section-header">
-          <h2 id="materials-title">Materialen</h2>
-        </div>
-
-        <div class="data-grid" data-material-list></div>
-      </section>
-
       </div>
 
       <div class="view" data-view="workout" hidden>
@@ -964,6 +1005,14 @@
         </article>
       </section>
 
+      <section class="section" aria-labelledby="materials-title">
+        <div class="section-header">
+          <h2 id="materials-title">Aanwezige materialen</h2>
+        </div>
+
+        <div class="data-grid" data-material-list></div>
+      </section>
+
       </div>
 
       <div class="view" data-view="exercises" hidden>
@@ -1049,13 +1098,14 @@
 
       const defaultState = {
         schemaVersion: CURRENT_SCHEMA_VERSION,
+        equipmentInitialized: true,
         profile: {
           name: "Atleet",
           birthDate: "",
           weightKg: "",
           heightCm: ""
         },
-        equipment: [],
+        equipment: ["mat_001", "mat_002", "mat_003", "mat_005"],
         trainingHistory: []
       };
 
@@ -1201,16 +1251,26 @@
           return this.save(state);
         },
 
+        updateEquipment(equipment) {
+          const state = this.load();
+          state.equipment = equipment;
+          return this.save(state);
+        },
+
         migrate(rawState) {
           const state = rawState && typeof rawState === "object" ? rawState : {};
+          const equipment = state.equipmentInitialized && Array.isArray(state.equipment)
+            ? state.equipment
+            : defaultState.equipment;
 
           return {
             schemaVersion: CURRENT_SCHEMA_VERSION,
+            equipmentInitialized: true,
             profile: {
               ...defaultState.profile,
               ...(state.profile || {})
             },
-            equipment: Array.isArray(state.equipment) ? state.equipment : [],
+            equipment,
             trainingHistory: Array.isArray(state.trainingHistory) ? state.trainingHistory : []
           };
         }
@@ -1275,6 +1335,10 @@
         return sourceData.materials.find((material) => material.id === id)?.name || id;
       }
 
+      function getActiveMaterials() {
+        return sourceData.materials.filter((material) => appState.equipment.includes(material.id));
+      }
+
       function getMaterialLoadLabel(material) {
         const weights = material.weightsKg.join(", ");
         const suffix = material.loadType === "pair"
@@ -1288,14 +1352,52 @@
 
       function renderMaterials() {
         materialList.innerHTML = sourceData.materials.map((material) => `
-          <article class="material-card">
-            <div class="material-title">
-              <span>${material.name}</span>
-              <span class="status-pill${material.available ? "" : " unavailable"}">${material.available ? "Beschikbaar" : "Niet actief"}</span>
-            </div>
-            <div class="muted">${getMaterialLoadLabel(material)}</div>
-          </article>
+          <button class="material-toggle${appState.equipment.includes(material.id) ? " active" : ""}" type="button" data-material-id="${material.id}" aria-pressed="${appState.equipment.includes(material.id)}">
+            <span>
+              <span class="material-title">${material.name}</span>
+              <span class="muted">${getMaterialLoadLabel(material)}</span>
+              ${material.available ? "" : `<span class="chip">Bron: niet actief</span>`}
+            </span>
+            <span class="toggle-switch" aria-hidden="true"></span>
+          </button>
         `).join("");
+
+        materialList.querySelectorAll("[data-material-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            toggleMaterial(button.dataset.materialId);
+          });
+        });
+      }
+
+      function toggleMaterial(materialId) {
+        const equipment = new Set(appState.equipment);
+
+        if (equipment.has(materialId)) {
+          equipment.delete(materialId);
+        } else {
+          equipment.add(materialId);
+        }
+
+        appState = FitnessStore.updateEquipment([...equipment]);
+        renderProfile();
+        renderMaterials();
+        renderExercises();
+      }
+
+      function getExerciseMaterials(exercise) {
+        const activeMaterials = exercise.materialIds.filter((id) => appState.equipment.includes(id));
+
+        return activeMaterials.length ? activeMaterials : exercise.materialIds;
+      }
+
+      function getExerciseAvailabilityLabel(exercise) {
+        const activeMaterialIds = getExerciseMaterials(exercise);
+        const hasAllMaterials = exercise.materialIds.every((id) => appState.equipment.includes(id));
+
+        return {
+          names: activeMaterialIds.map(getMaterialName).join(", "),
+          label: hasAllMaterials ? "" : "Mist materiaal"
+        };
       }
 
       function renderMuscleFilter() {
@@ -1357,10 +1459,10 @@
 
         exerciseList.innerHTML = exercises.map((exercise) => {
           const primaryMuscles = exercise.primaryMuscleGroupIds.map(getMuscleName).join(", ");
-          const materials = exercise.materialIds.map(getMaterialName).join(", ");
+          const availability = getExerciseAvailabilityLabel(exercise);
           const chips = exercise.primaryMuscleGroupIds
             .map((id) => `<span class="chip">${getMuscleName(id)}</span>`)
-            .join("");
+            .join("") + (availability.label ? `<span class="chip">${availability.label}</span>` : "");
 
           return `
             <button class="exercise" type="button" data-exercise="${exercise.name}">
@@ -1369,7 +1471,7 @@
               </div>
               <span class="exercise-main">
                 <span class="exercise-title">${exercise.name}</span>
-                <span class="exercise-muscle">${primaryMuscles} | ${materials}</span>
+                <span class="exercise-muscle">${primaryMuscles} | ${availability.names}</span>
                 <span class="chip-row">${chips}</span>
               </span>
               <span class="chevron">&gt;</span>
@@ -1488,7 +1590,7 @@
         profileShort.textContent = formatProfileMeta(profile);
         profileMeta.textContent = formatProfileMeta(profile);
         profileInitials.textContent = getInitials(profile.name);
-        equipmentCount.textContent = equipment.length || sourceData.materials.filter((material) => material.available).length;
+        equipmentCount.textContent = equipment.length;
         exerciseCountTargets.forEach((target) => {
           target.textContent = sourceData.exercises.length;
         });
