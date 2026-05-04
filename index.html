@@ -39,7 +39,8 @@
       button,
       a,
       input,
-      select {
+      select,
+      textarea {
         -webkit-tap-highlight-color: transparent;
       }
 
@@ -132,6 +133,8 @@
 
       .primary-button:focus-visible,
       .secondary-button:focus-visible,
+      .compact-button:focus-visible,
+      .icon-button:focus-visible,
       .tile:focus-visible,
       .exercise:focus-visible,
       .material-toggle:focus-visible,
@@ -140,7 +143,8 @@
       .link-button:focus-visible,
       .nav-item:focus-visible,
       input:focus-visible,
-      select:focus-visible {
+      select:focus-visible,
+      textarea:focus-visible {
         outline: 3px solid rgba(255, 107, 53, 0.38);
         outline-offset: 3px;
       }
@@ -464,6 +468,16 @@
         gap: 16px;
       }
 
+      .history-card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        padding: 16px;
+        display: grid;
+        gap: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      }
+
       .workout-card {
         border: 1px solid var(--line);
         border-radius: 16px;
@@ -542,10 +556,22 @@
         gap: 12px;
       }
 
+      .history-form {
+        display: grid;
+        gap: 12px;
+      }
+
       .field-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
+      }
+
+      .strength-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.7fr) minmax(0, 0.8fr) auto;
+        gap: 8px;
+        align-items: end;
       }
 
       label {
@@ -558,7 +584,8 @@
       }
 
       input,
-      select {
+      select,
+      textarea {
         width: 100%;
         min-height: 44px;
         border: 1px solid var(--line);
@@ -575,8 +602,14 @@
         appearance: none;
       }
 
+      textarea {
+        min-height: 76px;
+        resize: vertical;
+      }
+
       input:focus,
-      select:focus {
+      select:focus,
+      textarea:focus {
         border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.16);
       }
@@ -609,6 +642,61 @@
       .exercise-list {
         display: grid;
         gap: 8px;
+      }
+
+      .history-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .history-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 15px;
+        font-weight: 900;
+      }
+
+      .history-meta {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .history-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .compact-button,
+      .icon-button {
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel-strong);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .icon-button {
+        width: 44px;
+        padding: 0;
+      }
+
+      .compact-button:disabled,
+      .icon-button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+
+      .form-toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 10px;
       }
 
       .exercise {
@@ -835,7 +923,9 @@
       }
 
       @media (max-width: 430px) {
-        .field-grid {
+        .field-grid,
+        .strength-row,
+        .form-toolbar {
           grid-template-columns: 1fr;
         }
 
@@ -893,8 +983,8 @@
             <div class="icon-box">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14"></path><path d="M18 5v14"></path><path d="M3 8v8"></path><path d="M21 8v8"></path><path d="M6 12h12"></path></svg>
             </div>
-            <div class="stat-value">3</div>
-            <div class="stat-label">Workouts / week</div>
+            <div class="stat-value" data-history-count>0</div>
+            <div class="stat-label">Sessies</div>
           </article>
 
           <article class="stat-card">
@@ -943,28 +1033,82 @@
 
       <div class="view" data-view="workout" hidden>
       <header class="page-header">
-        <div class="eyebrow">Workout</div>
-        <h1>Training starten</h1>
-        <div class="muted">Klaar voor de volgende module.</div>
+        <h1>Workout</h1>
       </header>
 
       <section class="section" aria-labelledby="workout-title">
         <article class="workout-card">
           <div class="section-header">
-            <h2 id="workout-title">Vandaag</h2>
+            <h2 id="workout-title">Sessie loggen</h2>
           </div>
 
-          <ul class="workout-steps">
-            <li><span class="step-number">1</span><span>Kies een oefening uit de lijst.</span></li>
-            <li><span class="step-number">2</span><span>Registreer straks sets, reps en gewicht.</span></li>
-            <li><span class="step-number">3</span><span>Bewaar de training later in trainingshistorie.</span></li>
-          </ul>
+          <form class="history-form" data-history-form novalidate>
+            <input type="hidden" name="sessionId">
 
-          <button class="primary-button" type="button" data-action="start-workout">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
-            Start Workout
-          </button>
+            <div class="field-grid">
+              <label>
+                Datum
+                <input name="date" type="date" required>
+              </label>
+
+              <label>
+                Tijd
+                <input name="time" type="time" required>
+              </label>
+            </div>
+
+            <div class="field-grid">
+              <label>
+                Lengte
+                <input name="durationMinutes" type="number" inputmode="numeric" min="1" max="600" step="1" placeholder="min">
+              </label>
+
+              <label>
+                Type sessie
+                <select name="sessionType" data-session-type>
+                  <option value="strength">Kracht</option>
+                  <option value="cardio">Cardio</option>
+                  <option value="sport_training">Training andere sport</option>
+                  <option value="sport_match">Wedstrijd andere sport</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Omschrijving
+              <input name="title" type="text" placeholder="Bijv. hockeytraining, full body, duurloop">
+            </label>
+
+            <div data-strength-section>
+              <div class="section-header">
+                <h2>Oefeningen</h2>
+                <button class="link-button" type="button" data-action="add-strength-row">Rij toevoegen</button>
+              </div>
+              <div class="data-grid" data-strength-rows></div>
+            </div>
+
+            <label>
+              Notities
+              <textarea name="notes" placeholder="Wat ging goed, wat wil je aanpassen?"></textarea>
+            </label>
+
+            <div class="form-toolbar">
+              <button class="primary-button" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><path d="M17 21v-8H7v8"></path><path d="M7 3v5h8"></path></svg>
+                Opslaan
+              </button>
+              <button class="secondary-button" type="button" data-action="clear-history-form">Nieuw</button>
+            </div>
+          </form>
         </article>
+      </section>
+
+      <section class="section" aria-labelledby="history-title">
+        <div class="section-header">
+          <h2 id="history-title">Trainingshistorie</h2>
+        </div>
+
+        <div class="history-list" data-history-list></div>
       </section>
       </div>
 
@@ -1137,6 +1281,12 @@
           : JSON.parse(JSON.stringify(state));
       }
 
+      function createId() {
+        return window.crypto && typeof window.crypto.randomUUID === "function"
+          ? window.crypto.randomUUID()
+          : `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+      }
+
       const FitnessStore = {
         load() {
           try {
@@ -1191,6 +1341,35 @@
           return this.save(state);
         },
 
+        saveTrainingSession(session) {
+          const state = this.load();
+          const history = Array.isArray(state.trainingHistory) ? state.trainingHistory : [];
+          const now = new Date().toISOString();
+          const nextSession = {
+            ...session,
+            id: session.id || createId(),
+            updatedAt: now,
+            createdAt: session.createdAt || now
+          };
+          const sessionIndex = history.findIndex((item) => item.id === nextSession.id);
+
+          if (sessionIndex >= 0) {
+            history[sessionIndex] = nextSession;
+          } else {
+            history.unshift(nextSession);
+          }
+
+          state.trainingHistory = history;
+          return this.save(state);
+        },
+
+        deleteTrainingSession(sessionId) {
+          const state = this.load();
+          state.trainingHistory = (Array.isArray(state.trainingHistory) ? state.trainingHistory : [])
+            .filter((session) => session.id !== sessionId);
+          return this.save(state);
+        },
+
         migrate(rawState) {
           const state = rawState && typeof rawState === "object" ? rawState : {};
           const equipment = state.equipmentInitialized && Array.isArray(state.equipment)
@@ -1225,15 +1404,21 @@
 
       const toast = document.querySelector("#toast");
       const profileForm = document.querySelector("[data-profile-form]");
+      const historyForm = document.querySelector("[data-history-form]");
       const formError = document.querySelector("[data-form-error]");
       const profileNameTargets = document.querySelectorAll("[data-profile-name]");
       const profileShort = document.querySelector("[data-profile-short]");
       const profileMeta = document.querySelector("[data-profile-meta]");
       const profileInitials = document.querySelector("[data-profile-initials]");
       const equipmentCount = document.querySelector("[data-equipment-count]");
+      const historyCount = document.querySelector("[data-history-count]");
       const exerciseCountTargets = document.querySelectorAll("[data-exercise-count]");
       const exerciseList = document.querySelector("[data-exercise-list]");
       const materialList = document.querySelector("[data-material-list]");
+      const historyList = document.querySelector("[data-history-list]");
+      const strengthRows = document.querySelector("[data-strength-rows]");
+      const strengthSection = document.querySelector("[data-strength-section]");
+      const sessionTypeField = document.querySelector("[data-session-type]");
       const muscleFilter = document.querySelector("[data-muscle-filter]");
       const bodyMuscleTargets = document.querySelectorAll("[data-body-muscle]");
       const bodyMap = document.querySelector("[data-body-map]");
@@ -1566,8 +1751,17 @@
           .toUpperCase() || "AT";
       }
 
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
       function renderProfile() {
-        const { profile, equipment } = appState;
+        const { profile, equipment, trainingHistory } = appState;
 
         profileForm.elements.name.value = profile.name;
         profileForm.elements.birthDate.value = profile.birthDate;
@@ -1582,6 +1776,7 @@
         profileMeta.textContent = formatProfileMeta(profile);
         profileInitials.textContent = getInitials(profile.name);
         equipmentCount.textContent = equipment.length;
+        historyCount.textContent = trainingHistory.length;
         exerciseCountTargets.forEach((target) => {
           target.textContent = sourceData.exercises.length;
         });
@@ -1593,6 +1788,208 @@
             showToast(`${button.dataset.exercise} geselecteerd.`);
           });
         });
+      }
+
+      function getTodayDate() {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      function getCurrentTime() {
+        return new Date().toTimeString().slice(0, 5);
+      }
+
+      function getSessionTypeLabel(type) {
+        return {
+          strength: "Kracht",
+          cardio: "Cardio",
+          sport_training: "Training andere sport",
+          sport_match: "Wedstrijd andere sport"
+        }[type] || "Sessie";
+      }
+
+      function formatSessionDate(session) {
+        const dateLabel = session.date
+          ? new Date(`${session.date}T${session.time || "00:00"}`).toLocaleDateString("nl-NL", { day: "2-digit", month: "short", year: "numeric" })
+          : "Geen datum";
+
+        return session.time ? `${dateLabel} om ${session.time}` : dateLabel;
+      }
+
+      function getExerciseOptions(selectedId = "") {
+        return sourceData.exercises.map((exercise) => `
+          <option value="${escapeHtml(exercise.id)}"${exercise.id === selectedId ? " selected" : ""}>${escapeHtml(exercise.name)}</option>
+        `).join("");
+      }
+
+      function renderStrengthRows(rows = [{ exerciseId: sourceData.exercises[0]?.id || "", reps: "", weightKg: "" }]) {
+        strengthRows.innerHTML = rows.map((row, index) => `
+          <div class="strength-row" data-strength-row>
+            <label>
+              Oefening
+              <select name="exerciseId">${getExerciseOptions(row.exerciseId)}</select>
+            </label>
+            <label>
+              Reps
+              <input name="reps" type="number" inputmode="numeric" min="1" max="500" step="1" value="${escapeHtml(row.reps || "")}" placeholder="10">
+            </label>
+            <label>
+              Gewicht
+              <input name="weightKg" type="number" inputmode="decimal" min="0" max="500" step="0.5" value="${escapeHtml(row.weightKg || "")}" placeholder="kg">
+            </label>
+            <button class="icon-button" type="button" data-action="remove-strength-row" aria-label="Oefening verwijderen"${rows.length === 1 ? " disabled" : ""}>x</button>
+          </div>
+        `).join("");
+      }
+
+      function syncStrengthSection() {
+        const isStrength = sessionTypeField.value === "strength";
+
+        strengthSection.hidden = !isStrength;
+        if (isStrength && !strengthRows.children.length) {
+          renderStrengthRows();
+        }
+      }
+
+      function resetHistoryForm() {
+        historyForm.reset();
+        historyForm.elements.sessionId.value = "";
+        historyForm.elements.date.value = getTodayDate();
+        historyForm.elements.time.value = getCurrentTime();
+        historyForm.elements.sessionType.value = "strength";
+        renderStrengthRows();
+        syncStrengthSection();
+      }
+
+      function getStrengthRowsFromForm() {
+        return Array.from(strengthRows.querySelectorAll("[data-strength-row]")).map((row) => {
+          const exerciseId = row.querySelector("[name='exerciseId']").value;
+          const exercise = sourceData.exercises.find((item) => item.id === exerciseId);
+
+          return {
+            exerciseId,
+            name: exercise?.name || exerciseId,
+            reps: row.querySelector("[name='reps']").value,
+            weightKg: row.querySelector("[name='weightKg']").value
+          };
+        });
+      }
+
+      function getStrengthExercisesFromForm() {
+        return getStrengthRowsFromForm().filter((row) => row.exerciseId && (row.reps || row.weightKg));
+      }
+
+      function getHistoryFormData() {
+        const formData = new FormData(historyForm);
+        const sessionType = String(formData.get("sessionType") || "strength");
+
+        return {
+          id: String(formData.get("sessionId") || ""),
+          date: String(formData.get("date") || ""),
+          time: String(formData.get("time") || ""),
+          durationMinutes: String(formData.get("durationMinutes") || ""),
+          sessionType,
+          title: String(formData.get("title") || "").trim(),
+          notes: String(formData.get("notes") || "").trim(),
+          strengthExercises: sessionType === "strength" ? getStrengthExercisesFromForm() : []
+        };
+      }
+
+      function getHistoryErrors(session) {
+        const errors = [];
+        const duration = Number(session.durationMinutes);
+
+        if (!session.date) {
+          errors.push("Kies een datum.");
+        }
+
+        if (!session.time) {
+          errors.push("Kies een tijd.");
+        }
+
+        if (session.durationMinutes && (Number.isNaN(duration) || duration < 1 || duration > 600)) {
+          errors.push("Vul een lengte tussen 1 en 600 minuten in.");
+        }
+
+        if (session.sessionType === "strength" && !session.strengthExercises.length) {
+          errors.push("Voeg minimaal een kracht-oefening met reps of gewicht toe.");
+        }
+
+        return errors;
+      }
+
+      function saveHistoryFromForm() {
+        const session = getHistoryFormData();
+        const errors = getHistoryErrors(session);
+
+        if (errors.length) {
+          showToast(errors[0]);
+          return;
+        }
+
+        appState = FitnessStore.saveTrainingSession(session);
+        renderProfile();
+        renderHistory();
+        resetHistoryForm();
+        showToast("Sessie opgeslagen.");
+      }
+
+      function editHistorySession(sessionId) {
+        const session = appState.trainingHistory.find((item) => item.id === sessionId);
+
+        if (!session) {
+          return;
+        }
+
+        historyForm.elements.sessionId.value = session.id;
+        historyForm.elements.date.value = session.date || getTodayDate();
+        historyForm.elements.time.value = session.time || getCurrentTime();
+        historyForm.elements.durationMinutes.value = session.durationMinutes || "";
+        historyForm.elements.sessionType.value = session.sessionType || "strength";
+        historyForm.elements.title.value = session.title || "";
+        historyForm.elements.notes.value = session.notes || "";
+        renderStrengthRows(session.strengthExercises?.length ? session.strengthExercises : undefined);
+        syncStrengthSection();
+        showView("workout", "push");
+        showToast("Sessie geladen om te wijzigen.");
+      }
+
+      function deleteHistorySession(sessionId) {
+        appState = FitnessStore.deleteTrainingSession(sessionId);
+        renderProfile();
+        renderHistory();
+        showToast("Sessie verwijderd.");
+      }
+
+      function renderHistory() {
+        const sessions = [...appState.trainingHistory].sort((a, b) => `${b.date || ""}T${b.time || ""}`.localeCompare(`${a.date || ""}T${a.time || ""}`));
+
+        historyList.innerHTML = sessions.map((session) => {
+          const title = session.title || getSessionTypeLabel(session.sessionType);
+          const strengthSummary = session.strengthExercises?.length
+            ? session.strengthExercises.map((exercise) => `${exercise.name}: ${exercise.reps || "-"} reps${exercise.weightKg ? ` @ ${exercise.weightKg} kg` : ""}`).join(" | ")
+            : "";
+          const meta = [
+            getSessionTypeLabel(session.sessionType),
+            formatSessionDate(session),
+            session.durationMinutes ? `${session.durationMinutes} min` : ""
+          ].filter(Boolean).join(" | ");
+
+          return `
+            <article class="history-card">
+              <div class="history-title">
+                <span>${escapeHtml(title)}</span>
+                <span class="chip">${getSessionTypeLabel(session.sessionType)}</span>
+              </div>
+              <div class="history-meta">${escapeHtml(meta)}</div>
+              ${strengthSummary ? `<div class="history-meta">${escapeHtml(strengthSummary)}</div>` : ""}
+              ${session.notes ? `<div class="history-meta">${escapeHtml(session.notes)}</div>` : ""}
+              <div class="history-actions">
+                <button class="compact-button" type="button" data-history-edit="${session.id}">Wijzigen</button>
+                <button class="compact-button" type="button" data-history-delete="${session.id}">Verwijderen</button>
+              </div>
+            </article>
+          `;
+        }).join("") || `<div class="muted">Nog geen sessies gelogd.</div>`;
       }
 
       function getProfileFormData() {
@@ -1640,6 +2037,49 @@
         }, 500);
       });
 
+      historyForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        saveHistoryFromForm();
+      });
+
+      sessionTypeField.addEventListener("change", () => {
+        syncStrengthSection();
+      });
+
+      document.querySelector("[data-action='add-strength-row']").addEventListener("click", () => {
+        const currentRows = getStrengthRowsFromForm();
+        currentRows.push({ exerciseId: sourceData.exercises[0]?.id || "", reps: "", weightKg: "" });
+        renderStrengthRows(currentRows);
+      });
+
+      document.querySelector("[data-action='clear-history-form']").addEventListener("click", () => {
+        resetHistoryForm();
+      });
+
+      strengthRows.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-action='remove-strength-row']");
+
+        if (!button) {
+          return;
+        }
+
+        button.closest("[data-strength-row]").remove();
+        renderStrengthRows(getStrengthRowsFromForm().length ? getStrengthRowsFromForm() : undefined);
+      });
+
+      historyList.addEventListener("click", (event) => {
+        const editButton = event.target.closest("[data-history-edit]");
+        const deleteButton = event.target.closest("[data-history-delete]");
+
+        if (editButton) {
+          editHistorySession(editButton.dataset.historyEdit);
+        }
+
+        if (deleteButton) {
+          deleteHistorySession(deleteButton.dataset.historyDelete);
+        }
+      });
+
       viewLinks.forEach((link) => {
         link.addEventListener("click", (event) => {
           event.preventDefault();
@@ -1650,13 +2090,11 @@
       document.querySelectorAll("[data-action='start-workout']").forEach((button) => {
         button.addEventListener("click", () => {
           showView("workout", "push");
-          showToast("Workout module komt later.");
         });
       });
 
       document.querySelector("[data-action='stopwatch']").addEventListener("click", () => {
         showView("workout", "push");
-        showToast("Stopwatch komt later.");
       });
 
       document.querySelector("[data-action='all']").addEventListener("click", () => {
@@ -1702,6 +2140,8 @@
       renderMuscleFilter();
       renderBodyMapLegend();
       renderExercises();
+      resetHistoryForm();
+      renderHistory();
       showView((window.location.hash || (isProfileComplete(appState.profile) ? "#home" : "#profile")).slice(1));
     </script>
   </body>
