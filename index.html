@@ -661,10 +661,28 @@
       .material-title {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
         gap: 12px;
         font-size: 15px;
         font-weight: 800;
+      }
+
+      .material-code {
+        min-width: 34px;
+        min-height: 26px;
+        border-radius: 999px;
+        padding: 5px 8px;
+        display: inline-grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .material-card.active .material-code {
+        background: rgba(255, 107, 53, 0.18);
       }
 
       .status-pill {
@@ -1088,9 +1106,11 @@
 
     <output class="toast" id="toast" aria-live="polite"></output>
 
+    <script src="data/fitness-data.js"></script>
     <script>
       const STORAGE_KEY = "fitnessManagerState";
       const CURRENT_SCHEMA_VERSION = 1;
+      const sourceData = window.FITNESS_SOURCE_DATA;
 
       const defaultState = {
         schemaVersion: CURRENT_SCHEMA_VERSION,
@@ -1101,112 +1121,9 @@
           weightKg: "",
           heightCm: ""
         },
-        equipment: ["mat_001", "mat_002", "mat_003", "mat_005"],
-        materialWeightsKg: {
-          mat_001: [2.5, 5, 10, 12],
-          mat_003: [5, 10, 20],
-          mat_004: [1.25, 2.5, 5]
-        },
+        equipment: sourceData.defaultEquipmentIds,
+        materialConfig: sourceData.defaultMaterialConfig,
         trainingHistory: []
-      };
-
-      const sourceData = {
-        versions: {
-          exercises: "1.2.0",
-          muscleGroups: "1.2.0",
-          materials: "1.3.1"
-        },
-        muscleGroups: [
-          { id: "chest_mid_lower", name: "Borst midden/onder", parentId: "chest", isLeaf: true },
-          { id: "triceps", name: "Triceps", parentId: "upper_arm", isLeaf: true },
-          { id: "shoulders_front", name: "Schouders voor", parentId: "shoulders", isLeaf: true },
-          { id: "hamstrings", name: "Hamstrings", parentId: "posterior_leg", isLeaf: true },
-          { id: "glutes", name: "Bilspieren", parentId: "hips", isLeaf: true },
-          { id: "erector_spinae", name: "Rugstrekkers", parentId: "back", isLeaf: true },
-          { id: "quadriceps", name: "Quadriceps", parentId: "anterior_leg", isLeaf: true },
-          { id: "core_deep", name: "Diepe core", parentId: "core", isLeaf: true }
-        ],
-        materials: [
-          {
-            id: "mat_001",
-            name: "Dumbbell",
-            category: "free_weight",
-            available: true,
-            loadType: "pair",
-            weightsKg: [2.5, 5, 10, 12]
-          },
-          {
-            id: "mat_002",
-            name: "Barbell",
-            category: "free_weight",
-            available: true,
-            loadType: "barbell",
-            barWeightKg: 20,
-            weightsKg: [2.5, 5, 10, 20, 25]
-          },
-          {
-            id: "mat_003",
-            name: "Kettlebell",
-            category: "free_weight",
-            available: true,
-            loadType: "single",
-            weightsKg: [5, 10, 20]
-          },
-          {
-            id: "mat_004",
-            name: "EZ Curl Bar",
-            category: "free_weight",
-            available: false,
-            loadType: "barbell",
-            barWeightKg: 10,
-            weightsKg: [1.25, 2.5, 5]
-          },
-          {
-            id: "mat_005",
-            name: "Weight Plates",
-            category: "free_weight",
-            available: true,
-            loadType: "barbell",
-            weightsKg: [1.25, 2.5, 5, 10]
-          }
-        ],
-        exercises: [
-          {
-            id: "bench_press",
-            name: "Bench Press",
-            primaryMuscleGroupIds: ["chest_mid_lower"],
-            secondaryMuscleGroupIds: ["triceps", "shoulders_front"],
-            materialIds: ["mat_002", "mat_005"]
-          },
-          {
-            id: "deadlift",
-            name: "Deadlift",
-            primaryMuscleGroupIds: ["hamstrings", "glutes"],
-            secondaryMuscleGroupIds: ["erector_spinae", "core_deep"],
-            materialIds: ["mat_002", "mat_005"]
-          },
-          {
-            id: "squat",
-            name: "Squat",
-            primaryMuscleGroupIds: ["quadriceps", "glutes"],
-            secondaryMuscleGroupIds: ["hamstrings", "core_deep"],
-            materialIds: ["mat_002", "mat_005"]
-          },
-          {
-            id: "dumbbell_press",
-            name: "Dumbbell Press",
-            primaryMuscleGroupIds: ["chest_mid_lower"],
-            secondaryMuscleGroupIds: ["triceps", "shoulders_front"],
-            materialIds: ["mat_001"]
-          },
-          {
-            id: "kettlebell_swing",
-            name: "Kettlebell Swing",
-            primaryMuscleGroupIds: ["glutes", "hamstrings"],
-            secondaryMuscleGroupIds: ["core_deep", "erector_spinae"],
-            materialIds: ["mat_003"]
-          }
-        ]
       };
 
       function cloneState(state) {
@@ -1260,9 +1177,11 @@
 
         updateMaterialWeights(materialId, weightsKg) {
           const state = this.load();
-          state.materialWeightsKg = {
-            ...(state.materialWeightsKg || {}),
-            [materialId]: weightsKg
+          state.materialConfig = {
+            ...(state.materialConfig || {}),
+            [materialId]: {
+              values: weightsKg
+            }
           };
           return this.save(state);
         },
@@ -1272,6 +1191,18 @@
           const equipment = state.equipmentInitialized && Array.isArray(state.equipment)
             ? state.equipment
             : defaultState.equipment;
+          const migratedMaterialConfig = {
+            ...defaultState.materialConfig,
+            ...(state.materialConfig || {})
+          };
+
+          if (state.materialWeightsKg && typeof state.materialWeightsKg === "object") {
+            Object.entries(state.materialWeightsKg).forEach(([materialId, values]) => {
+              if (Array.isArray(values)) {
+                migratedMaterialConfig[materialId] = { values };
+              }
+            });
+          }
 
           return {
             schemaVersion: CURRENT_SCHEMA_VERSION,
@@ -1281,10 +1212,7 @@
               ...(state.profile || {})
             },
             equipment,
-            materialWeightsKg: {
-              ...defaultState.materialWeightsKg,
-              ...(state.materialWeightsKg || {})
-            },
+            materialConfig: migratedMaterialConfig,
             trainingHistory: Array.isArray(state.trainingHistory) ? state.trainingHistory : []
           };
         }
@@ -1354,41 +1282,28 @@
         return sourceData.materials.filter((material) => appState.equipment.includes(material.id));
       }
 
-      function isConfigurableMaterial(materialId) {
-        return ["mat_001", "mat_003", "mat_004"].includes(materialId);
-      }
+      function getMaterialConfigValues(material) {
+        const configuredValues = appState.materialConfig?.[material.id]?.values;
 
-      function getMaterialWeights(material) {
-        const configuredWeights = appState.materialWeightsKg?.[material.id];
-
-        return Array.isArray(configuredWeights) ? configuredWeights : material.weightsKg;
-      }
-
-      function getMaterialLoadLabel(material) {
-        const weights = getMaterialWeights(material).join(", ");
-        const suffix = material.loadType === "pair"
-          ? "per paar"
-          : material.loadType === "barbell"
-            ? `stang${material.barWeightKg ? ` ${material.barWeightKg} kg` : ""}`
-            : "per stuk";
-
-        return `${suffix} | ${weights} kg`;
+        return Array.isArray(configuredValues)
+          ? configuredValues
+          : sourceData.defaultMaterialConfig[material.id]?.values || [];
       }
 
       function renderMaterials() {
         materialList.innerHTML = sourceData.materials.map((material) => `
           <article class="material-card${appState.equipment.includes(material.id) ? " active" : ""}">
             <button class="material-toggle${appState.equipment.includes(material.id) ? " active" : ""}" type="button" data-material-id="${material.id}" aria-pressed="${appState.equipment.includes(material.id)}">
-              <span>
-                <span class="material-title">${material.name}</span>
-                <span class="muted">${getMaterialLoadLabel(material)}</span>
+              <span class="material-title">
+                <span class="material-code">${material.shortName}</span>
+                <span>${material.name}</span>
               </span>
               <span class="toggle-switch" aria-hidden="true"></span>
             </button>
-            ${isConfigurableMaterial(material.id) ? `
+            ${appState.equipment.includes(material.id) ? `
               <label class="material-weight-field">
-                Beschikbare gewichten in kg
-                <input type="text" inputmode="decimal" data-material-weights-id="${material.id}" value="${getMaterialWeights(material).join(", ")}" placeholder="2.5, 5, 10">
+                ${material.configLabel}
+                <input type="text" inputmode="${material.configType === "weight" ? "decimal" : "text"}" data-material-weights-id="${material.id}" value="${getMaterialConfigValues(material).join(", ")}" placeholder="${material.placeholder}">
               </label>
             ` : ""}
           </article>
@@ -1430,20 +1345,29 @@
           .sort((a, b) => a - b);
       }
 
-      function updateMaterialWeights(materialId, value) {
-        const weightsKg = [...new Set(parseWeights(value))];
-        const material = sourceData.materials.find((item) => item.id === materialId);
+      function parseResistanceLevels(value) {
+        return value
+          .split(/[;,]/)
+          .map((part) => part.trim().toLowerCase())
+          .filter(Boolean);
+      }
 
-        if (!material || !weightsKg.length) {
+      function updateMaterialWeights(materialId, value) {
+        const material = sourceData.materials.find((item) => item.id === materialId);
+        const values = material?.configType === "weight"
+          ? [...new Set(parseWeights(value))]
+          : [...new Set(parseResistanceLevels(value))];
+
+        if (!material || !values.length) {
           renderMaterials();
-          showToast("Vul minimaal een geldig gewicht in.");
+          showToast("Vul minimaal een geldige configuratie in.");
           return;
         }
 
-        appState = FitnessStore.updateMaterialWeights(materialId, weightsKg);
+        appState = FitnessStore.updateMaterialWeights(materialId, values);
         renderMaterials();
         renderExercises();
-        showToast("Gewichten opgeslagen op dit apparaat.");
+        showToast("Materiaalconfiguratie opgeslagen.");
       }
 
       function getExerciseMaterials(exercise) {
