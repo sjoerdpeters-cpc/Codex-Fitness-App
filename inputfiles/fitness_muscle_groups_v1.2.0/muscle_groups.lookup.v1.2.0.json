@@ -1,0 +1,325 @@
+{
+  "version": "1.2.0",
+  "byId": {
+    "upper_body": {
+      "slug": "upper-body",
+      "name": "Bovenlichaam",
+      "parentId": null,
+      "isLeaf": false
+    },
+    "arms": {
+      "slug": "arms",
+      "name": "Armen",
+      "parentId": null,
+      "isLeaf": false
+    },
+    "core": {
+      "slug": "core",
+      "name": "Core",
+      "parentId": null,
+      "isLeaf": false
+    },
+    "lower_body": {
+      "slug": "lower-body",
+      "name": "Onderlichaam",
+      "parentId": null,
+      "isLeaf": false
+    },
+    "neck": {
+      "slug": "neck",
+      "name": "Nek",
+      "parentId": "upper_body",
+      "isLeaf": false
+    },
+    "sternocleidomastoid": {
+      "slug": "sternocleidomastoid",
+      "name": "Voorste nekspier",
+      "parentId": "neck",
+      "isLeaf": true
+    },
+    "cervical_extensors": {
+      "slug": "cervical-extensors",
+      "name": "Nekstrekkers",
+      "parentId": "neck",
+      "isLeaf": true
+    },
+    "chest": {
+      "slug": "chest",
+      "name": "Borst",
+      "parentId": "upper_body",
+      "isLeaf": false
+    },
+    "chest_upper": {
+      "slug": "chest-upper",
+      "name": "Borst boven",
+      "parentId": "chest",
+      "isLeaf": true
+    },
+    "chest_mid_lower": {
+      "slug": "chest-mid-lower",
+      "name": "Borst midden/onder",
+      "parentId": "chest",
+      "isLeaf": true
+    },
+    "pectoralis_minor": {
+      "slug": "pectoralis-minor",
+      "name": "Kleine borstspier",
+      "parentId": "chest",
+      "isLeaf": true
+    },
+    "back": {
+      "slug": "back",
+      "name": "Rug",
+      "parentId": "upper_body",
+      "isLeaf": false
+    },
+    "traps_upper": {
+      "slug": "traps-upper",
+      "name": "Trapezius boven",
+      "parentId": "back",
+      "isLeaf": true
+    },
+    "traps_mid_lower": {
+      "slug": "traps-mid-lower",
+      "name": "Trapezius midden/onder",
+      "parentId": "back",
+      "isLeaf": true
+    },
+    "lats": {
+      "slug": "lats",
+      "name": "Brede rugspier / lats",
+      "parentId": "back",
+      "isLeaf": true
+    },
+    "rhomboids": {
+      "slug": "rhomboids",
+      "name": "Romboïden",
+      "parentId": "back",
+      "isLeaf": true
+    },
+    "teres_major_minor": {
+      "slug": "teres-major-minor",
+      "name": "Teres major/minor",
+      "parentId": "back",
+      "isLeaf": true
+    },
+    "erector_spinae": {
+      "slug": "erector-spinae",
+      "name": "Rugstrekkers",
+      "parentId": "back",
+      "isLeaf": true
+    },
+    "shoulders": {
+      "slug": "shoulders",
+      "name": "Schouders",
+      "parentId": "upper_body",
+      "isLeaf": false
+    },
+    "shoulders_front": {
+      "slug": "shoulders-front",
+      "name": "Schouders voorkant",
+      "parentId": "shoulders",
+      "isLeaf": true
+    },
+    "shoulders_side": {
+      "slug": "shoulders-side",
+      "name": "Schouders zijkant",
+      "parentId": "shoulders",
+      "isLeaf": true
+    },
+    "shoulders_rear": {
+      "slug": "shoulders-rear",
+      "name": "Schouders achterkant",
+      "parentId": "shoulders",
+      "isLeaf": true
+    },
+    "rotator_cuff": {
+      "slug": "rotator-cuff",
+      "name": "Rotator cuff",
+      "parentId": "shoulders",
+      "isLeaf": true
+    },
+    "biceps": {
+      "slug": "biceps",
+      "name": "Biceps",
+      "parentId": "arms",
+      "isLeaf": true
+    },
+    "brachialis": {
+      "slug": "brachialis",
+      "name": "Brachialis",
+      "parentId": "arms",
+      "isLeaf": true
+    },
+    "triceps": {
+      "slug": "triceps",
+      "name": "Triceps",
+      "parentId": "arms",
+      "isLeaf": true
+    },
+    "forearms_flexors": {
+      "slug": "forearms-flexors",
+      "name": "Onderarmen buigers",
+      "parentId": "arms",
+      "isLeaf": true
+    },
+    "forearms_extensors": {
+      "slug": "forearms-extensors",
+      "name": "Onderarmen strekkers",
+      "parentId": "arms",
+      "isLeaf": true
+    },
+    "abs": {
+      "slug": "abs",
+      "name": "Buikspieren",
+      "parentId": "core",
+      "isLeaf": true
+    },
+    "obliques": {
+      "slug": "obliques",
+      "name": "Schuine buikspieren",
+      "parentId": "core",
+      "isLeaf": true
+    },
+    "transverse_abs": {
+      "slug": "transverse-abs",
+      "name": "Diepe buikspieren",
+      "parentId": "core",
+      "isLeaf": true
+    },
+    "lower_back": {
+      "slug": "lower-back",
+      "name": "Onderrug",
+      "parentId": "core",
+      "isLeaf": true
+    },
+    "glutes": {
+      "slug": "glutes",
+      "name": "Bilspieren",
+      "parentId": "lower_body",
+      "isLeaf": false
+    },
+    "gluteus_maximus": {
+      "slug": "gluteus-maximus",
+      "name": "Grote bilspier",
+      "parentId": "glutes",
+      "isLeaf": true
+    },
+    "gluteus_medius_minimus": {
+      "slug": "gluteus-medius-minimus",
+      "name": "Middelste/kleine bilspier",
+      "parentId": "glutes",
+      "isLeaf": true
+    },
+    "hips": {
+      "slug": "hips",
+      "name": "Heupen",
+      "parentId": "lower_body",
+      "isLeaf": false
+    },
+    "hip_flexors": {
+      "slug": "hip-flexors",
+      "name": "Heupbuigers",
+      "parentId": "hips",
+      "isLeaf": true
+    },
+    "adductors": {
+      "slug": "adductors",
+      "name": "Adductoren / binnenkant bovenbeen",
+      "parentId": "hips",
+      "isLeaf": true
+    },
+    "abductors": {
+      "slug": "abductors",
+      "name": "Abductoren / buitenkant heup-bovenbeen",
+      "parentId": "hips",
+      "isLeaf": true
+    },
+    "legs": {
+      "slug": "legs",
+      "name": "Benen",
+      "parentId": "lower_body",
+      "isLeaf": false
+    },
+    "quadriceps": {
+      "slug": "quadriceps",
+      "name": "Quadriceps / bovenbeen voorkant",
+      "parentId": "legs",
+      "isLeaf": true
+    },
+    "hamstrings": {
+      "slug": "hamstrings",
+      "name": "Hamstrings / bovenbeen achterkant",
+      "parentId": "legs",
+      "isLeaf": true
+    },
+    "calves": {
+      "slug": "calves",
+      "name": "Kuiten",
+      "parentId": "legs",
+      "isLeaf": true
+    },
+    "tibialis_anterior": {
+      "slug": "tibialis-anterior",
+      "name": "Scheenbeenspier",
+      "parentId": "legs",
+      "isLeaf": true
+    },
+    "full_body": {
+      "slug": "full-body",
+      "name": "Full body",
+      "parentId": null,
+      "isLeaf": false
+    }
+  },
+  "leafMuscleGroupIds": [
+    "sternocleidomastoid",
+    "cervical_extensors",
+    "chest_upper",
+    "chest_mid_lower",
+    "pectoralis_minor",
+    "traps_upper",
+    "traps_mid_lower",
+    "lats",
+    "rhomboids",
+    "teres_major_minor",
+    "erector_spinae",
+    "shoulders_front",
+    "shoulders_side",
+    "shoulders_rear",
+    "rotator_cuff",
+    "biceps",
+    "brachialis",
+    "triceps",
+    "forearms_flexors",
+    "forearms_extensors",
+    "abs",
+    "obliques",
+    "transverse_abs",
+    "lower_back",
+    "gluteus_maximus",
+    "gluteus_medius_minimus",
+    "hip_flexors",
+    "adductors",
+    "abductors",
+    "quadriceps",
+    "hamstrings",
+    "calves",
+    "tibialis_anterior"
+  ],
+  "parentGroupIds": [
+    "neck",
+    "chest",
+    "back",
+    "shoulders",
+    "glutes",
+    "hips",
+    "legs"
+  ],
+  "regionIds": [
+    "upper_body",
+    "arms",
+    "core",
+    "lower_body"
+  ]
+}

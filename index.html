@@ -38,7 +38,8 @@
 
       button,
       a,
-      input {
+      input,
+      select {
         -webkit-tap-highlight-color: transparent;
       }
 
@@ -135,7 +136,8 @@
       .exercise:focus-visible,
       .link-button:focus-visible,
       .nav-item:focus-visible,
-      input:focus-visible {
+      input:focus-visible,
+      select:focus-visible {
         outline: 3px solid rgba(255, 107, 53, 0.38);
         outline-offset: 3px;
       }
@@ -256,10 +258,36 @@
       }
 
       .tile-meta,
-      .exercise-muscle {
+      .exercise-muscle,
+      .chip {
         color: var(--muted);
         font-size: 13px;
         line-height: 1.3;
+      }
+
+      .data-grid,
+      .filter-bar {
+        display: grid;
+        gap: 12px;
+      }
+
+      .filter-bar {
+        margin-bottom: 12px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .chip {
+        width: fit-content;
+        border-radius: 999px;
+        padding: 4px 8px;
+        background: rgba(255, 107, 53, 0.1);
+        color: var(--accent);
+        font-weight: 700;
       }
 
       .profile-card {
@@ -361,7 +389,8 @@
         letter-spacing: 0.3px;
       }
 
-      input {
+      input,
+      select {
         width: 100%;
         min-height: 44px;
         border: 1px solid var(--line);
@@ -374,7 +403,12 @@
         outline: none;
       }
 
-      input:focus {
+      select {
+        appearance: none;
+      }
+
+      input:focus,
+      select:focus {
         border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.16);
       }
@@ -445,6 +479,39 @@
 
       .chevron {
         color: var(--soft);
+      }
+
+      .material-card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        padding: 16px;
+        display: grid;
+        gap: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .material-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .status-pill {
+        border-radius: 999px;
+        padding: 4px 8px;
+        background: rgba(53, 208, 127, 0.1);
+        color: var(--success);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .status-pill.unavailable {
+        background: rgba(158, 158, 158, 0.12);
+        color: var(--muted);
       }
 
       .bottom-nav {
@@ -593,7 +660,7 @@
             <div class="icon-box neutral">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2h4"></path><path d="M12 14l3-3"></path><circle cx="12" cy="14" r="8"></circle></svg>
             </div>
-            <div class="stat-value">12</div>
+            <div class="stat-value" data-exercise-count>0</div>
             <div class="stat-label">Oefeningen</div>
           </article>
 
@@ -618,7 +685,7 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"></path><path d="M8 19V5"></path><path d="M16 19V5"></path><path d="M20 19V5"></path><path d="M8 12h8"></path></svg>
             </div>
             <div class="tile-title">Oefeningen</div>
-            <div class="tile-meta">12 beschikbaar</div>
+            <div class="tile-meta"><span data-exercise-count>0</span> beschikbaar</div>
           </a>
 
           <button class="tile" type="button" data-action="stopwatch">
@@ -629,6 +696,14 @@
             <div class="tile-meta">Track je tijd</div>
           </button>
         </div>
+      </section>
+
+      <section class="section" aria-labelledby="materials-title">
+        <div class="section-header">
+          <h2 id="materials-title">Materialen</h2>
+        </div>
+
+        <div class="data-grid" data-material-list></div>
       </section>
 
       </div>
@@ -737,40 +812,14 @@
           <button class="link-button" type="button" data-action="all">Alles zien</button>
         </div>
 
-        <div class="exercise-list">
-          <button class="exercise" type="button" data-exercise="Bench Press">
-            <div class="icon-box">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14"></path><path d="M18 5v14"></path><path d="M6 12h12"></path><path d="M3 9v6"></path><path d="M21 9v6"></path></svg>
-            </div>
-            <span class="exercise-main">
-              <span class="exercise-title">Bench Press</span>
-              <span class="exercise-muscle">Borst midden/onder</span>
-            </span>
-            <span class="chevron">&gt;</span>
-          </button>
-
-          <button class="exercise" type="button" data-exercise="Deadlift">
-            <div class="icon-box">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18h14"></path><path d="M7 18l2-8h6l2 8"></path><path d="M9 10l3-5 3 5"></path></svg>
-            </div>
-            <span class="exercise-main">
-              <span class="exercise-title">Deadlift</span>
-              <span class="exercise-muscle">Hamstrings</span>
-            </span>
-            <span class="chevron">&gt;</span>
-          </button>
-
-          <button class="exercise" type="button" data-exercise="Squat">
-            <div class="icon-box">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 20v-4l3-4"></path><path d="M17 20v-4l-3-4"></path><path d="M8 8h8"></path><path d="M12 4v8"></path></svg>
-            </div>
-            <span class="exercise-main">
-              <span class="exercise-title">Squat</span>
-              <span class="exercise-muscle">Quadriceps</span>
-            </span>
-            <span class="chevron">&gt;</span>
-          </button>
+        <div class="filter-bar">
+          <label>
+            Spiergroep
+            <select data-muscle-filter></select>
+          </label>
         </div>
+
+        <div class="exercise-list" data-exercise-list></div>
       </section>
       </div>
     </main>
@@ -812,6 +861,105 @@
         },
         equipment: [],
         trainingHistory: []
+      };
+
+      const sourceData = {
+        versions: {
+          exercises: "1.2.0",
+          muscleGroups: "1.2.0",
+          materials: "1.3.1"
+        },
+        muscleGroups: [
+          { id: "chest_mid_lower", name: "Borst midden/onder", parentId: "chest", isLeaf: true },
+          { id: "triceps", name: "Triceps", parentId: "upper_arm", isLeaf: true },
+          { id: "shoulders_front", name: "Schouders voor", parentId: "shoulders", isLeaf: true },
+          { id: "hamstrings", name: "Hamstrings", parentId: "posterior_leg", isLeaf: true },
+          { id: "glutes", name: "Bilspieren", parentId: "hips", isLeaf: true },
+          { id: "erector_spinae", name: "Rugstrekkers", parentId: "back", isLeaf: true },
+          { id: "quadriceps", name: "Quadriceps", parentId: "anterior_leg", isLeaf: true },
+          { id: "core_deep", name: "Diepe core", parentId: "core", isLeaf: true }
+        ],
+        materials: [
+          {
+            id: "mat_001",
+            name: "Dumbbell",
+            category: "free_weight",
+            available: true,
+            loadType: "pair",
+            weightsKg: [2.5, 5, 10, 12]
+          },
+          {
+            id: "mat_002",
+            name: "Barbell",
+            category: "free_weight",
+            available: true,
+            loadType: "barbell",
+            barWeightKg: 20,
+            weightsKg: [2.5, 5, 10, 20, 25]
+          },
+          {
+            id: "mat_003",
+            name: "Kettlebell",
+            category: "free_weight",
+            available: true,
+            loadType: "single",
+            weightsKg: [5, 10, 20]
+          },
+          {
+            id: "mat_004",
+            name: "EZ Curl Bar",
+            category: "free_weight",
+            available: false,
+            loadType: "barbell",
+            barWeightKg: 10,
+            weightsKg: [1.25, 2.5, 5]
+          },
+          {
+            id: "mat_005",
+            name: "Weight Plates",
+            category: "free_weight",
+            available: true,
+            loadType: "barbell",
+            weightsKg: [1.25, 2.5, 5, 10]
+          }
+        ],
+        exercises: [
+          {
+            id: "bench_press",
+            name: "Bench Press",
+            primaryMuscleGroupIds: ["chest_mid_lower"],
+            secondaryMuscleGroupIds: ["triceps", "shoulders_front"],
+            materialIds: ["mat_002", "mat_005"]
+          },
+          {
+            id: "deadlift",
+            name: "Deadlift",
+            primaryMuscleGroupIds: ["hamstrings", "glutes"],
+            secondaryMuscleGroupIds: ["erector_spinae", "core_deep"],
+            materialIds: ["mat_002", "mat_005"]
+          },
+          {
+            id: "squat",
+            name: "Squat",
+            primaryMuscleGroupIds: ["quadriceps", "glutes"],
+            secondaryMuscleGroupIds: ["hamstrings", "core_deep"],
+            materialIds: ["mat_002", "mat_005"]
+          },
+          {
+            id: "dumbbell_press",
+            name: "Dumbbell Press",
+            primaryMuscleGroupIds: ["chest_mid_lower"],
+            secondaryMuscleGroupIds: ["triceps", "shoulders_front"],
+            materialIds: ["mat_001"]
+          },
+          {
+            id: "kettlebell_swing",
+            name: "Kettlebell Swing",
+            primaryMuscleGroupIds: ["glutes", "hamstrings"],
+            secondaryMuscleGroupIds: ["core_deep", "erector_spinae"],
+            materialIds: ["mat_003"]
+          }
+        ]
       };
 
       function cloneState(state) {
@@ -880,6 +1028,10 @@
       const profileMeta = document.querySelector("[data-profile-meta]");
       const profileInitials = document.querySelector("[data-profile-initials]");
       const equipmentCount = document.querySelector("[data-equipment-count]");
+      const exerciseCountTargets = document.querySelectorAll("[data-exercise-count]");
+      const exerciseList = document.querySelector("[data-exercise-list]");
+      const materialList = document.querySelector("[data-material-list]");
+      const muscleFilter = document.querySelector("[data-muscle-filter]");
       const views = document.querySelectorAll("[data-view]");
       const viewLinks = document.querySelectorAll("[data-view-link]");
       let appState = FitnessStore.load();
@@ -913,6 +1065,81 @@
         toast.textContent = message;
         toast.classList.add("show");
         toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      function getMuscleName(id) {
+        return sourceData.muscleGroups.find((group) => group.id === id)?.name || id;
+      }
+
+      function getMaterialName(id) {
+        return sourceData.materials.find((material) => material.id === id)?.name || id;
+      }
+
+      function getMaterialLoadLabel(material) {
+        const weights = material.weightsKg.join(", ");
+        const suffix = material.loadType === "pair"
+          ? "per paar"
+          : material.loadType === "barbell"
+            ? `stang${material.barWeightKg ? ` ${material.barWeightKg} kg` : ""}`
+            : "per stuk";
+
+        return `${suffix} | ${weights} kg`;
+      }
+
+      function renderMaterials() {
+        materialList.innerHTML = sourceData.materials.map((material) => `
+          <article class="material-card">
+            <div class="material-title">
+              <span>${material.name}</span>
+              <span class="status-pill${material.available ? "" : " unavailable"}">${material.available ? "Beschikbaar" : "Niet actief"}</span>
+            </div>
+            <div class="muted">${getMaterialLoadLabel(material)}</div>
+          </article>
+        `).join("");
+      }
+
+      function renderMuscleFilter() {
+        const options = sourceData.muscleGroups
+          .filter((group) => group.isLeaf)
+          .map((group) => `<option value="${group.id}">${group.name}</option>`)
+          .join("");
+
+        muscleFilter.innerHTML = `<option value="all">Alle spiergroepen</option>${options}`;
+      }
+
+      function renderExercises() {
+        const selectedMuscle = muscleFilter.value || "all";
+        const exercises = sourceData.exercises.filter((exercise) => {
+          if (selectedMuscle === "all") {
+            return true;
+          }
+
+          return [...exercise.primaryMuscleGroupIds, ...exercise.secondaryMuscleGroupIds].includes(selectedMuscle);
+        });
+
+        exerciseList.innerHTML = exercises.map((exercise) => {
+          const primaryMuscles = exercise.primaryMuscleGroupIds.map(getMuscleName).join(", ");
+          const materials = exercise.materialIds.map(getMaterialName).join(", ");
+          const chips = exercise.primaryMuscleGroupIds
+            .map((id) => `<span class="chip">${getMuscleName(id)}</span>`)
+            .join("");
+
+          return `
+            <button class="exercise" type="button" data-exercise="${exercise.name}">
+              <div class="icon-box">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14"></path><path d="M18 5v14"></path><path d="M6 12h12"></path><path d="M3 9v6"></path><path d="M21 9v6"></path></svg>
+              </div>
+              <span class="exercise-main">
+                <span class="exercise-title">${exercise.name}</span>
+                <span class="exercise-muscle">${primaryMuscles} | ${materials}</span>
+                <span class="chip-row">${chips}</span>
+              </span>
+              <span class="chevron">&gt;</span>
+            </button>
+          `;
+        }).join("") || `<div class="muted">Geen oefeningen gevonden voor deze spiergroep.</div>`;
+
+        bindExerciseButtons();
       }
 
       function formatProfileMeta(profile) {
@@ -1023,7 +1250,18 @@
         profileShort.textContent = formatProfileMeta(profile);
         profileMeta.textContent = formatProfileMeta(profile);
         profileInitials.textContent = getInitials(profile.name);
-        equipmentCount.textContent = equipment.length;
+        equipmentCount.textContent = equipment.length || sourceData.materials.filter((material) => material.available).length;
+        exerciseCountTargets.forEach((target) => {
+          target.textContent = sourceData.exercises.length;
+        });
+      }
+
+      function bindExerciseButtons() {
+        document.querySelectorAll("[data-exercise]").forEach((button) => {
+          button.addEventListener("click", () => {
+            showToast(`${button.dataset.exercise} geselecteerd.`);
+          });
+        });
       }
 
       profileForm.addEventListener("submit", (event) => {
@@ -1083,13 +1321,13 @@
 
       document.querySelector("[data-action='all']").addEventListener("click", () => {
         showView("exercises", "push");
-        showToast("Alle oefeningen komen later.");
+        muscleFilter.value = "all";
+        renderExercises();
+        showToast("Alle oefeningen getoond.");
       });
 
-      document.querySelectorAll("[data-exercise]").forEach((button) => {
-        button.addEventListener("click", () => {
-          showToast(`${button.dataset.exercise} geselecteerd.`);
-        });
+      muscleFilter.addEventListener("change", () => {
+        renderExercises();
       });
 
       window.addEventListener("hashchange", () => {
@@ -1097,6 +1335,9 @@
       });
 
       renderProfile();
+      renderMaterials();
+      renderMuscleFilter();
+      renderExercises();
       showView((window.location.hash || (isProfileComplete(appState.profile) ? "#home" : "#profile")).slice(1));
     </script>
   </body>

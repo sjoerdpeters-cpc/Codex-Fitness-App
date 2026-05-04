@@ -1,0 +1,1097 @@
+{
+  "version": "1.2.0",
+  "releasedAt": "2026-05-03",
+  "description": "Complete muscle group taxonomy for a fitness app, including hierarchy, slugs, aliases and metadata for filtering/search.",
+  "bodyModel": {
+    "canvas": {
+      "width": 320,
+      "height": 520
+    },
+    "views": [
+      "front",
+      "back",
+      "side"
+    ],
+    "sides": [
+      "left",
+      "right",
+      "both"
+    ],
+    "visualization": {
+      "enabled": false,
+      "note": "Visualization fields are intentionally omitted in v1.2.0. SVG/3D overlays can be added later without changing ids."
+    }
+  },
+  "schema": {
+    "id": "Stable technical identifier, use for references from exercises.",
+    "slug": "URL/frontend friendly identifier.",
+    "name": "Dutch display name.",
+    "englishName": "English display name.",
+    "latinName": "Latin/anatomical name when applicable.",
+    "type": "region | parent_group | muscle_group | functional_group",
+    "parentId": "Parent node id or null.",
+    "bodyRegion": "upper_body | arms | core | lower_body | full_body",
+    "bodyPart": "More specific anatomical location.",
+    "side": "left | right | both",
+    "views": "Body-map views where this group is relevant.",
+    "aliases": "Search terms/synonyms.",
+    "isLeaf": "True for actual selectable muscle groups; false for grouping nodes.",
+    "importance": "0.0-1.0 relative importance for training/app logic."
+  },
+  "muscleGroups": [
+    {
+      "id": "upper_body",
+      "name": "Bovenlichaam",
+      "englishName": "Upper body",
+      "latinName": null,
+      "slug": "upper-body",
+      "type": "region",
+      "parentId": null,
+      "bodyRegion": "upper_body",
+      "bodyPart": "romp_en_schouders",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "bovenlichaam",
+        "upper body",
+        "torso upper"
+      ],
+      "isLeaf": false,
+      "importance": 1.0
+    },
+    {
+      "id": "arms",
+      "name": "Armen",
+      "englishName": "Arms",
+      "latinName": null,
+      "slug": "arms",
+      "type": "region",
+      "parentId": null,
+      "bodyRegion": "arms",
+      "bodyPart": "armen",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "armen",
+        "arms",
+        "upper arms",
+        "lower arms"
+      ],
+      "isLeaf": false,
+      "importance": 0.85
+    },
+    {
+      "id": "core",
+      "name": "Core",
+      "englishName": "Core",
+      "latinName": null,
+      "slug": "core",
+      "type": "region",
+      "parentId": null,
+      "bodyRegion": "core",
+      "bodyPart": "romp",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "core",
+        "romp",
+        "buik",
+        "onderrug"
+      ],
+      "isLeaf": false,
+      "importance": 1.0
+    },
+    {
+      "id": "lower_body",
+      "name": "Onderlichaam",
+      "englishName": "Lower body",
+      "latinName": null,
+      "slug": "lower-body",
+      "type": "region",
+      "parentId": null,
+      "bodyRegion": "lower_body",
+      "bodyPart": "benen_en_heupen",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "onderlichaam",
+        "lower body",
+        "legs",
+        "benen"
+      ],
+      "isLeaf": false,
+      "importance": 1.0
+    },
+    {
+      "id": "neck",
+      "name": "Nek",
+      "englishName": "Neck",
+      "latinName": null,
+      "slug": "neck",
+      "type": "parent_group",
+      "parentId": "upper_body",
+      "bodyRegion": "upper_body",
+      "bodyPart": "nek",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "nek",
+        "neck"
+      ],
+      "isLeaf": false,
+      "importance": 0.45
+    },
+    {
+      "id": "sternocleidomastoid",
+      "name": "Voorste nekspier",
+      "englishName": "Sternocleidomastoid",
+      "latinName": "Sternocleidomastoideus",
+      "slug": "sternocleidomastoid",
+      "type": "muscle_group",
+      "parentId": "neck",
+      "bodyRegion": "upper_body",
+      "bodyPart": "nek",
+      "side": "both",
+      "views": [
+        "front",
+        "side"
+      ],
+      "aliases": [
+        "voorste nekspier",
+        "sternocleidomastoid",
+        "scm",
+        "nek voorkant"
+      ],
+      "isLeaf": true,
+      "importance": 0.35
+    },
+    {
+      "id": "cervical_extensors",
+      "name": "Nekstrekkers",
+      "englishName": "Cervical extensors",
+      "latinName": "Cervical Extensor Group",
+      "slug": "cervical-extensors",
+      "type": "muscle_group",
+      "parentId": "neck",
+      "bodyRegion": "upper_body",
+      "bodyPart": "nek",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "nekstrekkers",
+        "cervical extensors",
+        "neck extensors",
+        "nek achterkant"
+      ],
+      "isLeaf": true,
+      "importance": 0.35
+    },
+    {
+      "id": "chest",
+      "name": "Borst",
+      "englishName": "Chest",
+      "latinName": null,
+      "slug": "chest",
+      "type": "parent_group",
+      "parentId": "upper_body",
+      "bodyRegion": "upper_body",
+      "bodyPart": "borst",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "borst",
+        "chest",
+        "pecs",
+        "pectorals"
+      ],
+      "isLeaf": false,
+      "importance": 0.9
+    },
+    {
+      "id": "chest_upper",
+      "name": "Borst boven",
+      "englishName": "Upper chest",
+      "latinName": "Pectoralis Major - Clavicular Head",
+      "slug": "chest-upper",
+      "type": "muscle_group",
+      "parentId": "chest",
+      "bodyRegion": "upper_body",
+      "bodyPart": "borst",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "borst boven",
+        "upper chest",
+        "upper pecs",
+        "incline chest"
+      ],
+      "isLeaf": true,
+      "importance": 0.8
+    },
+    {
+      "id": "chest_mid_lower",
+      "name": "Borst midden/onder",
+      "englishName": "Middle/lower chest",
+      "latinName": "Pectoralis Major - Sternal Head",
+      "slug": "chest-mid-lower",
+      "type": "muscle_group",
+      "parentId": "chest",
+      "bodyRegion": "upper_body",
+      "bodyPart": "borst",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "borst midden",
+        "borst onder",
+        "middle chest",
+        "lower chest",
+        "pecs"
+      ],
+      "isLeaf": true,
+      "importance": 0.85
+    },
+    {
+      "id": "pectoralis_minor",
+      "name": "Kleine borstspier",
+      "englishName": "Pectoralis minor",
+      "latinName": "Pectoralis Minor",
+      "slug": "pectoralis-minor",
+      "type": "muscle_group",
+      "parentId": "chest",
+      "bodyRegion": "upper_body",
+      "bodyPart": "borst",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "kleine borstspier",
+        "pectoralis minor",
+        "pec minor"
+      ],
+      "isLeaf": true,
+      "importance": 0.45
+    },
+    {
+      "id": "back",
+      "name": "Rug",
+      "englishName": "Back",
+      "latinName": null,
+      "slug": "back",
+      "type": "parent_group",
+      "parentId": "upper_body",
+      "bodyRegion": "upper_body",
+      "bodyPart": "rug",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "rug",
+        "back",
+        "upper back",
+        "lower back"
+      ],
+      "isLeaf": false,
+      "importance": 1.0
+    },
+    {
+      "id": "traps_upper",
+      "name": "Trapezius boven",
+      "englishName": "Upper traps",
+      "latinName": "Trapezius - Upper Fibers",
+      "slug": "traps-upper",
+      "type": "muscle_group",
+      "parentId": "back",
+      "bodyRegion": "upper_body",
+      "bodyPart": "bovenrug_nek",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "traps boven",
+        "upper traps",
+        "monnikskapspier boven"
+      ],
+      "isLeaf": true,
+      "importance": 0.65
+    },
+    {
+      "id": "traps_mid_lower",
+      "name": "Trapezius midden/onder",
+      "englishName": "Middle/lower traps",
+      "latinName": "Trapezius - Middle/Lower Fibers",
+      "slug": "traps-mid-lower",
+      "type": "muscle_group",
+      "parentId": "back",
+      "bodyRegion": "upper_body",
+      "bodyPart": "bovenrug",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "traps midden",
+        "traps onder",
+        "middle traps",
+        "lower traps",
+        "monnikskapspier"
+      ],
+      "isLeaf": true,
+      "importance": 0.7
+    },
+    {
+      "id": "lats",
+      "name": "Brede rugspier / lats",
+      "englishName": "Latissimus dorsi",
+      "latinName": "Latissimus Dorsi",
+      "slug": "lats",
+      "type": "muscle_group",
+      "parentId": "back",
+      "bodyRegion": "upper_body",
+      "bodyPart": "rug_zijkant",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "lats",
+        "brede rugspier",
+        "latissimus dorsi",
+        "v-shape"
+      ],
+      "isLeaf": true,
+      "importance": 0.9
+    },
+    {
+      "id": "rhomboids",
+      "name": "Romboïden",
+      "englishName": "Rhomboids",
+      "latinName": "Rhomboideus Major / Minor",
+      "slug": "rhomboids",
+      "type": "muscle_group",
+      "parentId": "back",
+      "bodyRegion": "upper_body",
+      "bodyPart": "bovenrug_midden",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "romboiden",
+        "rhomboids",
+        "tussen schouderbladen"
+      ],
+      "isLeaf": true,
+      "importance": 0.65
+    },
+    {
+      "id": "teres_major_minor",
+      "name": "Teres major/minor",
+      "englishName": "Teres major/minor",
+      "latinName": "Teres Major / Teres Minor",
+      "slug": "teres-major-minor",
+      "type": "muscle_group",
+      "parentId": "back",
+      "bodyRegion": "upper_body",
+      "bodyPart": "bovenrug_schouderblad",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "teres",
+        "teres major",
+        "teres minor",
+        "achterkant schouderblad"
+      ],
+      "isLeaf": true,
+      "importance": 0.5
+    },
+    {
+      "id": "erector_spinae",
+      "name": "Rugstrekkers",
+      "englishName": "Erector spinae",
+      "latinName": "Erector Spinae",
+      "slug": "erector-spinae",
+      "type": "muscle_group",
+      "parentId": "back",
+      "bodyRegion": "core",
+      "bodyPart": "wervelkolom",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "rugstrekkers",
+        "erector spinae",
+        "spinal erectors",
+        "onderrug"
+      ],
+      "isLeaf": true,
+      "importance": 0.8
+    },
+    {
+      "id": "shoulders",
+      "name": "Schouders",
+      "englishName": "Shoulders",
+      "latinName": null,
+      "slug": "shoulders",
+      "type": "parent_group",
+      "parentId": "upper_body",
+      "bodyRegion": "upper_body",
+      "bodyPart": "schouders",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "schouders",
+        "shoulders",
+        "delts",
+        "deltoids"
+      ],
+      "isLeaf": false,
+      "importance": 0.9
+    },
+    {
+      "id": "shoulders_front",
+      "name": "Schouders voorkant",
+      "englishName": "Anterior deltoid",
+      "latinName": "Deltoideus Anterior",
+      "slug": "shoulders-front",
+      "type": "muscle_group",
+      "parentId": "shoulders",
+      "bodyRegion": "upper_body",
+      "bodyPart": "schouders",
+      "side": "both",
+      "views": [
+        "front",
+        "side"
+      ],
+      "aliases": [
+        "voorste schouder",
+        "front delt",
+        "anterior deltoid"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "shoulders_side",
+      "name": "Schouders zijkant",
+      "englishName": "Lateral deltoid",
+      "latinName": "Deltoideus Lateralis",
+      "slug": "shoulders-side",
+      "type": "muscle_group",
+      "parentId": "shoulders",
+      "bodyRegion": "upper_body",
+      "bodyPart": "schouders",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "zijkant schouder",
+        "side delt",
+        "lateral deltoid"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "shoulders_rear",
+      "name": "Schouders achterkant",
+      "englishName": "Posterior deltoid",
+      "latinName": "Deltoideus Posterior",
+      "slug": "shoulders-rear",
+      "type": "muscle_group",
+      "parentId": "shoulders",
+      "bodyRegion": "upper_body",
+      "bodyPart": "schouders",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "achterste schouder",
+        "rear delt",
+        "posterior deltoid"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "rotator_cuff",
+      "name": "Rotator cuff",
+      "englishName": "Rotator cuff",
+      "latinName": "Rotator Cuff Group",
+      "slug": "rotator-cuff",
+      "type": "muscle_group",
+      "parentId": "shoulders",
+      "bodyRegion": "upper_body",
+      "bodyPart": "schoudergewricht",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "rotator cuff",
+        "schouderstabilisatoren",
+        "supraspinatus",
+        "infraspinatus"
+      ],
+      "isLeaf": true,
+      "importance": 0.65
+    },
+    {
+      "id": "biceps",
+      "name": "Biceps",
+      "englishName": "Biceps",
+      "latinName": "Biceps Brachii",
+      "slug": "biceps",
+      "type": "muscle_group",
+      "parentId": "arms",
+      "bodyRegion": "arms",
+      "bodyPart": "bovenarm_voorkant",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "biceps",
+        "bovenarm voorkant",
+        "guns"
+      ],
+      "isLeaf": true,
+      "importance": 0.7
+    },
+    {
+      "id": "brachialis",
+      "name": "Brachialis",
+      "englishName": "Brachialis",
+      "latinName": "Brachialis",
+      "slug": "brachialis",
+      "type": "muscle_group",
+      "parentId": "arms",
+      "bodyRegion": "arms",
+      "bodyPart": "bovenarm",
+      "side": "both",
+      "views": [
+        "front",
+        "side"
+      ],
+      "aliases": [
+        "brachialis",
+        "diepe bovenarmspier",
+        "arm flexor"
+      ],
+      "isLeaf": true,
+      "importance": 0.55
+    },
+    {
+      "id": "triceps",
+      "name": "Triceps",
+      "englishName": "Triceps",
+      "latinName": "Triceps Brachii",
+      "slug": "triceps",
+      "type": "muscle_group",
+      "parentId": "arms",
+      "bodyRegion": "arms",
+      "bodyPart": "bovenarm_achterkant",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "triceps",
+        "bovenarm achterkant",
+        "arm extension"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "forearms_flexors",
+      "name": "Onderarmen buigers",
+      "englishName": "Forearm flexors",
+      "latinName": "Forearm Flexor Group",
+      "slug": "forearms-flexors",
+      "type": "muscle_group",
+      "parentId": "arms",
+      "bodyRegion": "arms",
+      "bodyPart": "onderarm",
+      "side": "both",
+      "views": [
+        "front",
+        "side"
+      ],
+      "aliases": [
+        "onderarm buigers",
+        "forearm flexors",
+        "grip"
+      ],
+      "isLeaf": true,
+      "importance": 0.6
+    },
+    {
+      "id": "forearms_extensors",
+      "name": "Onderarmen strekkers",
+      "englishName": "Forearm extensors",
+      "latinName": "Forearm Extensor Group",
+      "slug": "forearms-extensors",
+      "type": "muscle_group",
+      "parentId": "arms",
+      "bodyRegion": "arms",
+      "bodyPart": "onderarm",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "onderarm strekkers",
+        "forearm extensors",
+        "polsstrekkers"
+      ],
+      "isLeaf": true,
+      "importance": 0.55
+    },
+    {
+      "id": "abs",
+      "name": "Buikspieren",
+      "englishName": "Abs",
+      "latinName": "Rectus Abdominis",
+      "slug": "abs",
+      "type": "muscle_group",
+      "parentId": "core",
+      "bodyRegion": "core",
+      "bodyPart": "buik_voorkant",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "buikspieren",
+        "abs",
+        "sixpack",
+        "rectus abdominis"
+      ],
+      "isLeaf": true,
+      "importance": 0.8
+    },
+    {
+      "id": "obliques",
+      "name": "Schuine buikspieren",
+      "englishName": "Obliques",
+      "latinName": "External / Internal Obliques",
+      "slug": "obliques",
+      "type": "muscle_group",
+      "parentId": "core",
+      "bodyRegion": "core",
+      "bodyPart": "buik_zijkant",
+      "side": "both",
+      "views": [
+        "front",
+        "side"
+      ],
+      "aliases": [
+        "schuine buikspieren",
+        "obliques",
+        "side abs"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "transverse_abs",
+      "name": "Diepe buikspieren",
+      "englishName": "Transverse abdominis",
+      "latinName": "Transversus Abdominis",
+      "slug": "transverse-abs",
+      "type": "muscle_group",
+      "parentId": "core",
+      "bodyRegion": "core",
+      "bodyPart": "diepe_core",
+      "side": "both",
+      "views": [
+        "front",
+        "side"
+      ],
+      "aliases": [
+        "diepe buikspieren",
+        "transverse abs",
+        "transversus abdominis",
+        "deep core"
+      ],
+      "isLeaf": true,
+      "importance": 0.8
+    },
+    {
+      "id": "lower_back",
+      "name": "Onderrug",
+      "englishName": "Lower back",
+      "latinName": "Lumbar Erector Spinae",
+      "slug": "lower-back",
+      "type": "muscle_group",
+      "parentId": "core",
+      "bodyRegion": "core",
+      "bodyPart": "onderrug",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "onderrug",
+        "lower back",
+        "lumbar",
+        "rugstrekkers onder"
+      ],
+      "isLeaf": true,
+      "importance": 0.8
+    },
+    {
+      "id": "glutes",
+      "name": "Bilspieren",
+      "englishName": "Glutes",
+      "latinName": null,
+      "slug": "glutes",
+      "type": "parent_group",
+      "parentId": "lower_body",
+      "bodyRegion": "lower_body",
+      "bodyPart": "billen",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "bilspieren",
+        "glutes",
+        "gluteals"
+      ],
+      "isLeaf": false,
+      "importance": 0.9
+    },
+    {
+      "id": "gluteus_maximus",
+      "name": "Grote bilspier",
+      "englishName": "Gluteus maximus",
+      "latinName": "Gluteus Maximus",
+      "slug": "gluteus-maximus",
+      "type": "muscle_group",
+      "parentId": "glutes",
+      "bodyRegion": "lower_body",
+      "bodyPart": "billen",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "grote bilspier",
+        "gluteus maximus",
+        "glute max"
+      ],
+      "isLeaf": true,
+      "importance": 0.85
+    },
+    {
+      "id": "gluteus_medius_minimus",
+      "name": "Middelste/kleine bilspier",
+      "englishName": "Gluteus medius/minimus",
+      "latinName": "Gluteus Medius / Minimus",
+      "slug": "gluteus-medius-minimus",
+      "type": "muscle_group",
+      "parentId": "glutes",
+      "bodyRegion": "lower_body",
+      "bodyPart": "heup_zijkant",
+      "side": "both",
+      "views": [
+        "side",
+        "back"
+      ],
+      "aliases": [
+        "middelste bilspier",
+        "kleine bilspier",
+        "glute med",
+        "glute minimus"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "hips",
+      "name": "Heupen",
+      "englishName": "Hips",
+      "latinName": null,
+      "slug": "hips",
+      "type": "parent_group",
+      "parentId": "lower_body",
+      "bodyRegion": "lower_body",
+      "bodyPart": "heupen",
+      "side": "both",
+      "views": [
+        "front",
+        "side",
+        "back"
+      ],
+      "aliases": [
+        "heupen",
+        "hips",
+        "pelvis"
+      ],
+      "isLeaf": false,
+      "importance": 0.85
+    },
+    {
+      "id": "hip_flexors",
+      "name": "Heupbuigers",
+      "englishName": "Hip flexors",
+      "latinName": "Iliopsoas / Hip Flexor Group",
+      "slug": "hip-flexors",
+      "type": "muscle_group",
+      "parentId": "hips",
+      "bodyRegion": "lower_body",
+      "bodyPart": "heup_voorkant",
+      "side": "both",
+      "views": [
+        "front",
+        "side"
+      ],
+      "aliases": [
+        "heupbuigers",
+        "hip flexors",
+        "iliopsoas",
+        "psoas"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "adductors",
+      "name": "Adductoren / binnenkant bovenbeen",
+      "englishName": "Adductors",
+      "latinName": "Hip Adductor Group",
+      "slug": "adductors",
+      "type": "muscle_group",
+      "parentId": "hips",
+      "bodyRegion": "lower_body",
+      "bodyPart": "bovenbeen_binnenkant",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "adductoren",
+        "binnenkant bovenbeen",
+        "adductors",
+        "inner thigh"
+      ],
+      "isLeaf": true,
+      "importance": 0.7
+    },
+    {
+      "id": "abductors",
+      "name": "Abductoren / buitenkant heup-bovenbeen",
+      "englishName": "Abductors",
+      "latinName": "Hip Abductor Group",
+      "slug": "abductors",
+      "type": "muscle_group",
+      "parentId": "hips",
+      "bodyRegion": "lower_body",
+      "bodyPart": "heup_buitenkant",
+      "side": "both",
+      "views": [
+        "side"
+      ],
+      "aliases": [
+        "abductoren",
+        "buitenkant heup",
+        "abductors",
+        "outer thigh"
+      ],
+      "isLeaf": true,
+      "importance": 0.7
+    },
+    {
+      "id": "legs",
+      "name": "Benen",
+      "englishName": "Legs",
+      "latinName": null,
+      "slug": "legs",
+      "type": "parent_group",
+      "parentId": "lower_body",
+      "bodyRegion": "lower_body",
+      "bodyPart": "benen",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "benen",
+        "legs",
+        "lower limbs"
+      ],
+      "isLeaf": false,
+      "importance": 1.0
+    },
+    {
+      "id": "quadriceps",
+      "name": "Quadriceps / bovenbeen voorkant",
+      "englishName": "Quadriceps",
+      "latinName": "Quadriceps Femoris",
+      "slug": "quadriceps",
+      "type": "muscle_group",
+      "parentId": "legs",
+      "bodyRegion": "lower_body",
+      "bodyPart": "bovenbeen_voorkant",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "quadriceps",
+        "quads",
+        "bovenbeen voorkant",
+        "voorbenen"
+      ],
+      "isLeaf": true,
+      "importance": 0.9
+    },
+    {
+      "id": "hamstrings",
+      "name": "Hamstrings / bovenbeen achterkant",
+      "englishName": "Hamstrings",
+      "latinName": "Hamstring Group",
+      "slug": "hamstrings",
+      "type": "muscle_group",
+      "parentId": "legs",
+      "bodyRegion": "lower_body",
+      "bodyPart": "bovenbeen_achterkant",
+      "side": "both",
+      "views": [
+        "back"
+      ],
+      "aliases": [
+        "hamstrings",
+        "bovenbeen achterkant",
+        "achterbenen"
+      ],
+      "isLeaf": true,
+      "importance": 0.9
+    },
+    {
+      "id": "calves",
+      "name": "Kuiten",
+      "englishName": "Calves",
+      "latinName": "Gastrocnemius / Soleus",
+      "slug": "calves",
+      "type": "muscle_group",
+      "parentId": "legs",
+      "bodyRegion": "lower_body",
+      "bodyPart": "onderbeen_achterkant",
+      "side": "both",
+      "views": [
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "kuiten",
+        "calves",
+        "gastrocnemius",
+        "soleus"
+      ],
+      "isLeaf": true,
+      "importance": 0.75
+    },
+    {
+      "id": "tibialis_anterior",
+      "name": "Scheenbeenspier",
+      "englishName": "Tibialis anterior",
+      "latinName": "Tibialis Anterior",
+      "slug": "tibialis-anterior",
+      "type": "muscle_group",
+      "parentId": "legs",
+      "bodyRegion": "lower_body",
+      "bodyPart": "onderbeen_voorkant",
+      "side": "both",
+      "views": [
+        "front"
+      ],
+      "aliases": [
+        "scheenbeenspier",
+        "tibialis anterior",
+        "shin muscle"
+      ],
+      "isLeaf": true,
+      "importance": 0.45
+    },
+    {
+      "id": "full_body",
+      "name": "Full body",
+      "englishName": "Full body",
+      "latinName": null,
+      "slug": "full-body",
+      "type": "functional_group",
+      "parentId": null,
+      "bodyRegion": "full_body",
+      "bodyPart": "volledig_lichaam",
+      "side": "both",
+      "views": [
+        "front",
+        "back",
+        "side"
+      ],
+      "aliases": [
+        "full body",
+        "volledig lichaam",
+        "total body",
+        "whole body"
+      ],
+      "isLeaf": false,
+      "importance": 1.0
+    }
+  ]
+}
